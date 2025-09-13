@@ -23,7 +23,7 @@ Github Repository for Capstone Fall 2025 Project
     python3 server.py
     ```
 5_1. **alternatively run Flask command**
-    ``` cmd
+    ``` shell
     flask --app server run --debug
     ```
 
