@@ -22,10 +22,10 @@ Github Repository for Capstone Fall 2025 Project
     ``` cmd
     python3 server.py
     ```
-5_1. **alternatively run Flask command**
-    ``` shell
+    **alternatively run Flask command**
+    ````    
     flask --app server run --debug
-    ```
+    ````
 
 
     *this will start the server on local host, port 5000 by default*
