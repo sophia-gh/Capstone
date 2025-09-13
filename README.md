@@ -14,17 +14,29 @@ Github Repository for Capstone Fall 2025 Project
     ```
 
     *if successfull the tag `(venv)` will appear before the path on the command line* 
-
-4. **from the virtual environment, run the server.py file**
+4. **in your virtual environment, install Flask**
+    ``` cmd
+    pip install Flask
+    ```
+5. **from the virtual environment, run the server.py file**
     ``` cmd
     python3 server.py
     ```
+5_1. **alternatively run Flask command**
+    ``` cmd
+    flask --app server run --debug
+    ```
+
 
     *this will start the server on local host, port 5000 by default*
 
-5. **in a seperate terminal, navigate to the `client` directory**
+6. **in a seperate terminal, navigate to the `client` directory**
 
-6. **run the npm start command to start the flask app on local host**
+7. **install react**
+    ``` cmd
+    npm install
+    ```
+8. **run the npm start command to start the flask app on local host**
     ``` cmd
     npm start
     ```
@@ -32,7 +44,7 @@ Github Repository for Capstone Fall 2025 Project
     *if successful it will open a browser to the local host url the app is running in*
     *alternatively, click the local host or network link*
 
-7. **the page should display the data stored in the server.py file, should look like this** 
+9. **the page should display the data stored in the server.py file, should look like this** 
     ``` 
     Member 1
 
