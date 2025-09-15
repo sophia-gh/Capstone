@@ -27,7 +27,6 @@ Github Repository for Capstone Fall 2025 Project
     flask --app server run --debug
     ````
 
-
     *this will start the server on local host, port 5000 by default*
 
 6. **in a seperate terminal, navigate to the `client` directory**
@@ -53,3 +52,12 @@ Github Repository for Capstone Fall 2025 Project
     Member 3
     ```
     *on this page do `ctrl + shift + i` and click `console` to see console output for debugging*
+
+## Clean Up After Running
+1. Navigate to the terminal where your virtual environment is running and deactivate your virtual environment
+    ```cmd
+    deactivate
+    ```
+    *if successfull the tag `(venv)` will no longer appear before the path on the command line*
+2. In the terminal where your react app is running, do `ctrl + c` to kill the process
+
