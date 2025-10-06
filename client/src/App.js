@@ -1,5 +1,27 @@
 import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './components/pages/HomePage';
+import APICall from './components/pages/apiExample';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
 
+function App() {
+  return (
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path ="/apiCallExample" element = {<APICall />} />
+      </Routes>
+      <Footer/>
+    </Router>
+  );
+}
+
+export default App;
+
+// intial tutorial app function
+/* 
 function App() {
 
   const [data, setData] = useState([{}])
@@ -31,4 +53,4 @@ function App() {
   )
 }
 
-export default App
+export default App */
