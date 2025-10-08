@@ -31,7 +31,7 @@ Github Repository for Capstone Fall 2025 Project
 
 6. **in a seperate terminal, navigate to the `client` directory**
 
-7. **install react**
+7. **install dependencies**
     ``` cmd
     npm install
     ```
