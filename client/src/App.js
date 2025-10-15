@@ -2,16 +2,24 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/pages/HomePage';
 import APICall from './components/pages/apiExample';
+import MainLayout from './components/layout/MainLayout';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import Dashboard from './components/pages/Dashboard';
+import Components from './components/pages/Components';
+import Login from './components/pages/Login';
 
 function App() {
   return (
     <Router>
-      <Header />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path ="/apiCallExample" element = {<APICall />} />
+        <Route path="/" element={<Login />}/>
+        <Route path="/app" element={<MainLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path ="/app/apiCallExample" element = {<APICall />} />
+          <Route path ="/app/Dashboard" element = {<Dashboard />} />
+          <Route path ="/app/Components" element = {<Components />} />
+        </Route>
       </Routes>
       <Footer/>
     </Router>
