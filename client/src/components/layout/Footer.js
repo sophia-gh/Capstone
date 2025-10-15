@@ -1,9 +1,10 @@
 import React from 'react'
+import './style.css';
 
 const Footer = () => {
   return (
     <footer>
-      <p>© 2025 Tool and Die Mangager</p>
+      <p className='Footer'>© 2025 Tool and Die Manager</p>
     </footer>
   );
 };
