@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from 'react'
-
+import React, { useState } from 'react'
+import Button from './button'
 function App() {
-
-  const [data, setData] = useState([{}])
-
-  useEffect(() => {
+  const [queryData, setQueryData] = useState()
+  
+  const fetchData = () => {  
       fetch("/getDies")
-      .then (res => res.json())
-      .then (data => {
-        setData(data)
-        console.log(data)
-      })
-  }, []) //only runs once
+      .then (response => response.json())
+      .then (data => {setQueryData(data)})
+  }
 
   return (
     <div>
       <h1>Die List</h1>
       <pre>
-        {JSON.stringify(data, null, 2)}
+      <Button onClick={fetchData}></Button>
+      {JSON.stringify(queryData, null, 2)}
       </pre>
     </div>
   )
