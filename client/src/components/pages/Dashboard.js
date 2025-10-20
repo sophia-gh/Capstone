@@ -15,6 +15,7 @@ const Dashboard = () => {
         <div className="card" onClick={() => navigate("/app/Components")} style={{ cursor: "pointer" }}>
           <div className="card-header">
             <h3>Total Components</h3>
+            
           </div>
           <p className="card-value">40</p> 
           <span className="card-subtext">+2 from last month</span>
