@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -6,20 +5,20 @@ const Dashboard = () => {
   return (
     <div>
       <header>
-        <h1>Dashboard</h1>
+        <h1 className="main-header">Dashboard</h1>
         <p>
           Overview of your tool and die operations, key metrics, and system status.
         </p>
       </header>
-            <section className="card-grid">
+      <section className="card-grid">
         <div className="card" onClick={() => navigate("/app/Components")} style={{ cursor: "pointer" }}>
           <div className="card-header">
             <h3>Total Components</h3>
+            
           </div>
           <p className="card-value">40</p> 
           <span className="card-subtext">+2 from last month</span>
         </div>
-
         <div className="card">
           <div className="card-header">
             <h3>Active Components</h3>
@@ -46,7 +45,35 @@ const Dashboard = () => {
         </div>
       </section>
       <main>
-        <p>this is all just dummy data. no calls here. i can't figure out how to make the cards look like the figma mockup. why do these look weird and offputting</p>
+        <p>Recent Activity</p>
+        <div className="card">
+            <table className="activity-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Event</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>10:45 AM</td>
+                  <td>Component check completed</td>
+                  <td>Success</td>
+                </tr>
+                <tr>
+                  <td>9:30 AM</td>
+                  <td>Tool #12 maintenance</td>
+                  <td>Warning</td>
+                </tr>
+                <tr>
+                  <td>8:00 AM</td>
+                  <td>System reboot</td>
+                  <td>Success</td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
       </main>
     </div>
   );

@@ -13,9 +13,9 @@ const Login = () => {
 
     if (email === 'admin@example.com' && password === 'password') {
       setError('');
-      navigate('/app');
+      navigate('/app/Dashboard');
     } else {
-      setError('Invalid email or password');
+      setError('Invalid email or password. Contact admin if you need access.');
     }
   };
 
@@ -41,9 +41,9 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 />
-                {error && <p>{error}</p>}
                 <button type="submit">Login</button>
             </form>
+            {error && <p className='error'>{error}</p>}
         </div>
     </div>
   );
