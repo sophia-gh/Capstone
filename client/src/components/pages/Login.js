@@ -13,7 +13,7 @@ const Login = () => {
 
     if (email === 'admin@example.com' && password === 'password') {
       setError('');
-      navigate('/app');
+      navigate('/app/Dashboard');
     } else {
       setError('Invalid email or password. Contact admin if you need access.');
     }
