@@ -4,7 +4,7 @@ from tables import *
 
 db = SQLAlchemy(model_class=Base)
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:databa53KEy@localhost:5432/toolingInventory'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:mysecretpassword@localhost:5432/toolmanagementdev'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 

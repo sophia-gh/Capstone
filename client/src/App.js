@@ -18,8 +18,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />}/>
         <Route path="/app" element={<MainLayout />}>
-{/*       <Route index element={<HomePage />} />
-          <Route path ="/app/apiCallExample" element = {<APICall />} /> */}
+{/*       <Route index element={<HomePage />} />*/}
+          <Route path ="/app/apiCallExample" element = {<APICall />} />
           <Route path ="/app/Dashboard" element = {<Dashboard />} />
           <Route path ="/app/Inventory" element = {<Inventory />} />
           <Route path ="/app/Components" element = {<Components />} />

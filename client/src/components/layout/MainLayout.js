@@ -11,8 +11,8 @@ const MainLayout = () => {
             <aside className="sidebar">
                 <h1 className="sidebar-title">Navigation</h1>
                 <nav>
-{/*                    <NavLink to="/app" end className="sidebar-link">Home</NavLink> 
-                    <NavLink to="/app/apiCallExample" className="sidebar-link">APICall</NavLink> */}
+{/*                    <NavLink to="/app" end className="sidebar-link">Home</NavLink> */}
+                    <NavLink to="/app/apiCallExample" className="sidebar-link">APICall</NavLink> 
                     <NavLink to="/app/Dashboard" className="sidebar-link">Dashboard</NavLink>
                     <NavLink to="/app/Inventory" className="sidebar-link">Inventory</NavLink>
                     <NavLink to="/app/Components" className="sidebar-link">Components</NavLink>
