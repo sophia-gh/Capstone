@@ -53,16 +53,11 @@ function App() {
 
   return (
     <div>
-
-      {(typeof data.members === 'undefined') ? (
-        <p>Loading...</p>
-      ) : ( 
-        data.members.map((member, i) => (
-          <p key ={i}> {member}</p>
-        ))
-        
-      )}
-      
+      <h1>Die List</h1>
+      <pre>
+      <Button onClick={fetchData}></Button>
+      {JSON.stringify(queryData, null, 2)}
+      </pre>
     </div>
   )
 }
