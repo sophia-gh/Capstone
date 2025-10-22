@@ -7,6 +7,8 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Dashboard from './components/pages/Dashboard';
 import Components from './components/pages/Components';
+import Servicing from './components/pages/Servicing';
+import Admin from './components/pages/Admin';
 import Login from './components/pages/Login';
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
           <Route path ="/app/apiCallExample" element = {<APICall />} />
           <Route path ="/app/Dashboard" element = {<Dashboard />} />
           <Route path ="/app/Components" element = {<Components />} />
+          <Route path ="/app/Servicing" element = {<Servicing />} />
+          <Route path ="/app/Admin" element = {<Admin />} />
         </Route>
       </Routes>
       <Footer/>

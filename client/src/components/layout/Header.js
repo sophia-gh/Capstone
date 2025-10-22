@@ -13,3 +13,5 @@ const Header = () => {
 };
 
 export default Header;
+
+{/* header file is no longer used due to the organization of the page, this file is historic/can be deleted */}
