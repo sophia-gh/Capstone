@@ -14,10 +14,7 @@ const MainLayout = () => {
 {/*                    <NavLink to="/app" end className="sidebar-link">Home</NavLink> 
                     <NavLink to="/app/apiCallExample" className="sidebar-link">APICall</NavLink> */}
                     <NavLink to="/app/Dashboard" className="sidebar-link">Dashboard</NavLink>
-                    <NavLink to="/app/Inventory" className="sidebar-link">Inventory
-                        <NavLink to="/app/Inventory/Components" className="sidebar-nest">Components</NavLink>
-                        <NavLink to="/app/Inventory/Dies" className="sidebar-nest">Dies</NavLink>                    
-                    </NavLink>
+                    <NavLink to="/app/Tooling" className="sidebar-link">Tooling</NavLink>
                     <NavLink to="/app/Servicing" className="sidebar-link">Servicing</NavLink>
                     <NavLink to="/app/Admin" className="sidebar-link">Admin</NavLink>
 

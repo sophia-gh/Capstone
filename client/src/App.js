@@ -3,12 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/pages/HomePage';
 import APICall from './components/pages/apiExample';
 import MainLayout from './components/layout/MainLayout';
-import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Dashboard from './components/pages/Dashboard';
-import Inventory from './components/pages/Inventory';
-import Components from './components/pages/Components';
-import Dies from './components/pages/Dies';
+import Tooling from './components/pages/Tooling';
 import Servicing from './components/pages/Servicing';
 import Admin from './components/pages/Admin';
 import Login from './components/pages/Login';
@@ -22,9 +19,7 @@ function App() {
 {/*       <Route index element={<HomePage />} />
           <Route path ="/app/apiCallExample" element = {<APICall />} /> */}
           <Route path ="/app/Dashboard" element = {<Dashboard />} />
-          <Route path ="/app/Inventory" element = {<Inventory />} />
-          <Route path ="/app/Inventory/Components" element = {<Components />} />
-          <Route path ="/app/Inventory/Dies" element = {<Dies />} />
+          <Route path ="/app/Tooling" element = {<Tooling />} />
           <Route path ="/app/Servicing" element = {<Servicing />} />
           <Route path ="/app/Admin" element = {<Admin />} />
         </Route>
