@@ -1,11 +1,20 @@
+import argparse
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from tables import *
 
-db = SQLAlchemy(model_class=Base)
+parser = argparse.ArgumentParser(description="Run Flask app with custom DB credentials")
+parser.add_argument("--password", required=True, help="Database password")
+parser.add_argument("--database", default="tooldbdev", help="Database name (default: tooldbdev)")
+args = parser.parse_args()
+
+db_uri = f"postgresql://postgres:{args.password}@/{args.database}"
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:mysecretpassword@localhost:5432/toolmanagementdev'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
 @app.route("/getDies")
