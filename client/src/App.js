@@ -16,8 +16,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />}/>
         <Route path="/app" element={<MainLayout />}>
-{/*       <Route index element={<HomePage />} />
-          <Route path ="/app/apiCallExample" element = {<APICall />} /> */}
+{/*       <Route index element={<HomePage />} />*/}
+          <Route path ="/app/apiCallExample" element = {<APICall />} />
           <Route path ="/app/Dashboard" element = {<Dashboard />} />
           <Route path ="/app/Tooling" element = {<Tooling />} />
           <Route path ="/app/Servicing" element = {<Servicing />} />
@@ -50,16 +50,11 @@ function App() {
 
   return (
     <div>
-
-      {(typeof data.members === 'undefined') ? (
-        <p>Loading...</p>
-      ) : ( 
-        data.members.map((member, i) => (
-          <p key ={i}> {member}</p>
-        ))
-        
-      )}
-      
+      <h1>Die List</h1>
+      <pre>
+      <Button onClick={fetchData}></Button>
+      {JSON.stringify(queryData, null, 2)}
+      </pre>
     </div>
   )
 }

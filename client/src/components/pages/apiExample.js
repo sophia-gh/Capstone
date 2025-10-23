@@ -1,31 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import Button from '../layout/button';
+
 function APICall() {
-
-  const [data, setData] = useState([{}])
-
-  useEffect(() => {
-      fetch("/members").then (
-        res => res.json()
-      ).then (
-          data => {
-            setData(data)
-            console.log(data)
-          }
-      )
-  }, []) //only runs once
+  const [queryData, setQueryData] = useState()
+  
+  const fetchData = () => {  
+      fetch("/getDies")
+      .then (response => response.json())
+      .then (data => {setQueryData(data)})
+  }
 
   return (
     <div>
-
-      {(typeof data.members === 'undefined') ? (
-        <p>Loading...</p>
-      ) : ( 
-        data.members.map((member, i) => (
-          <p key ={i}> {member}</p>
-        ))
-        
-      )}
-      
+      <h1>Die List</h1>
+      <pre>
+      <Button onClick={fetchData}></Button>
+      {JSON.stringify(queryData, null, 2)}
+      </pre>
     </div>
   )
 }
