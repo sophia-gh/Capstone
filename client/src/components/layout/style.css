@@ -261,15 +261,44 @@ h5 {
     inset 10px 10px 14px rgba(0, 39, 80, 0.16);
 }
 
-.activity-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
+table{
+  border-spacing: 0;
 }
 
-.activity-table th, .activity-table td {
+th{
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--color-header-bg);
+}
+
+.activity-table {
+  width: 100%;
+  border-collapse: separate;
+}
+
+.activity-table th {
+  text-align: left;
+  background-color: var(--color-header-bg);
+  color: var(--color-text-bold);
+  padding: 0.6rem;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.activity-table td {
   text-align: left;
   padding: 0.6rem;
   font-size: 0.9rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.table-card {
+  background-color: var(--color-card);
+  border-radius: var(--border-radius);
+  padding: var(--padding-base);
+  box-shadow: var(--shadow-card);
+  border: .5px solid var(--color-border);
+  max-height: 50rem;
+  overflow-y: auto;
 }
