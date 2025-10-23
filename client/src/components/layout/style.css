@@ -81,6 +81,10 @@
     inset 4px 4px 5px rgba(163, 163, 163, 0.16);
 }
 
+.sidebar-nest.active {
+  background-color: var(--color-sidebar-active);
+}
+
 /* Right Section */
 .content-area {
   flex: 1;
