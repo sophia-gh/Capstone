@@ -2,13 +2,11 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import inspect, DateTime, BigInteger, Identity, ForeignKey
+from sqlalchemy import inspect, DateTime, BigInteger, Identity, ForeignKey 
 import datetime
-
 
 class Base(DeclarativeBase):
     pass
-
 
 db = SQLAlchemy(model_class=Base)
 
