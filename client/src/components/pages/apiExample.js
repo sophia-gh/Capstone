@@ -12,7 +12,7 @@ function APICall() {
   // }
 
   
-  const fetchDies = async () => {
+  const fetchDies = async (e) => {
 
   // dieQuery is example information to be sent to flask route and used to query database
   const dieQuery = {

@@ -17,6 +17,15 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
+    #select * from dies;
+@app.route("/getAllDies") 
+def get_AllDiesFromCompany(): 
+    statement = db.select(Dies)
+    die_query = db.session.scalars(statement).all() 
+    dies_dict = [model_to_dict(Die) for Die in die_query]
+    return jsonify(dies_dict)
+
+    # select * from dies where company;
 @app.route("/getAllDiesFromCompany", methods=['POST'])
 def get_AllDiesFromCompany():
     data = request.get_json()
@@ -26,7 +35,7 @@ def get_AllDiesFromCompany():
     dies_dict = [model_to_dict(Die) for Die in die_query]
     return jsonify(dies_dict)
 
-    
+   #select * from components where tool_number = '607636044-5';
 @app.route("/getComponentsForDie", methods=['POST'])
 def get_ComponentsForDie():
     data = request.get_json()
@@ -35,7 +44,8 @@ def get_ComponentsForDie():
     components_query = db.session.scalars(statement).all() 
     components_dict = [model_to_dict(component) for component in components_query]  
     return jsonify(components_dict) 
-
+    
+    # select * from component_details where tool_number = '607636044-5';
 @app.route("/getAllComponentDetailsForDie", methods=['POST'])
 def get_AllComponentDetailsForDie():
     data = request.get_json()
@@ -44,7 +54,8 @@ def get_AllComponentDetailsForDie():
     component_details_query = db.session.scalars(statement).all() 
     component_details_dict = [model_to_dict(ComponentDetail) for ComponentDetail in component_details_query]
     return jsonify(component_details_dict)
-
+    
+    # select detail_number from component_details where tool_number = '607636044-5';
 @app.route("/getAllDetailNumbersForDie", methods=['POST'])
 def get_AllDetailNumbersForDie():
     data = request.get_json()
@@ -53,6 +64,15 @@ def get_AllDetailNumbersForDie():
     component_details_query = db.session.scalars(statement).all() 
     component_details_dict = [model_to_dict(ComponentDetail) for ComponentDetail in component_details_query]
     return jsonify(component_details_dict)
+    
+    # select distinct company from dies;
+@app.route("/getAllCompanies", methods=['GET'])
+def get_AllCompanies():
+    statement = db.select(Dies.company).distinct()
+    companies_query = db.session.scalars(statement).all()
+    companies_dict = [model_to_dict(company) for company in companies_query]
+    return jsonify(companies_dict)
+
 
 if __name__ == "__main__":
     with app.app_context():
