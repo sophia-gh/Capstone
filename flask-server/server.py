@@ -19,7 +19,7 @@ db.init_app(app)
 
     #select * from dies;
 @app.route("/getAllDies") 
-def get_AllDiesFromCompany(): 
+def get_AllDies(): 
     statement = db.select(Dies)
     die_query = db.session.scalars(statement).all() 
     dies_dict = [model_to_dict(Die) for Die in die_query]
@@ -66,14 +66,24 @@ def get_AllDetailNumbersForDie():
     return jsonify(component_details_dict)
     
     # select distinct company from dies;
-@app.route("/getAllCompanies", methods=['GET'])
+@app.route("/getAllCompanies")
 def get_AllCompanies():
     statement = db.select(Dies.company).distinct()
     companies_query = db.session.scalars(statement).all()
     companies_dict = [model_to_dict(company) for company in companies_query]
     return jsonify(companies_dict)
 
-
+   # select * from components where status = 'active' and tool_number = '607636044-5'; 
+@app.route("/getAllActiveComponentsForDie", methods=['POST'])
+def get_AllActiveComponentsForDie():
+    data = request.get_json()
+    tool_number = data.get('tool_number')
+    status = data.get('status')
+    statement = db.select(Components.status).where(Components.status == 'active').where(Components.tool_number == tool_number)
+    component_details_query = db.session.scalars(statement).all() 
+    component_dict = [model_to_dict(Component) for Component in component_query]
+    return jsonify(component_details_dict)
+    
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
