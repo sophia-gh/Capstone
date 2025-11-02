@@ -1,26 +1,39 @@
 import argparse
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
 from tables import *
 
-parser = argparse.ArgumentParser(description="Run Flask app with custom DB credentials")
-parser.add_argument("--password", required=True, help="Database password")
-parser.add_argument("--database", default="tooldbdev", help="Database name (default: tooldbdev)")
-args = parser.parse_args()
-
-db_uri = f"postgresql://postgres:{args.password}@{args.database}"
-
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile('config.py')    
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
-    #select * from dies;
+@app.route("/login", methods=['POST'])
+def login():
+    data = request.get_json()
+    employee_id= data.get('employee_id')
+    password = data.get('password')  
+    statement = db.select(Employees).where(Employees.employee_id == employee_id).where(Employees.password == password)
+    user_query = db.session.scalars(statement).first()  
+    if not user_query:
+        return jsonify({'user': False})
+    session['employee_id'] = user_query.employee_id
+    session['first_name'] = user_query.first_name
+    session['last_name'] = user_query.last_name
+    print(f"Current session: {session}")
+    return jsonify({'user': True})
+
+@app.route('/logout')
+def logout():
+    session.pop('employee_id', None)
+    session.pop('first_name', None)
+    session.pop('last_name', None)
+    return jsonify({'message': 'Logged out successfully'})
+
 @app.route("/getAllDies") 
 def get_AllDies(): 
-    statement = db.select(Dies)
+    statement = db.select(Dies) 
     die_query = db.session.scalars(statement).all() 
     dies_dict = [model_to_dict(Die) for Die in die_query]
     return jsonify(dies_dict)

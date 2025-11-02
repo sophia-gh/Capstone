@@ -39,7 +39,8 @@ class Employees(db.Model):
     __tablename__ = "employees"
     employee_id: Mapped[int] = mapped_column(primary_key=True)
     first_name: Mapped[str]
-    last_name: Mapped[str]
+    last_name: Mapped[str] 
+    password: Mapped[str]
 
 class OperationsLog(db.Model):
     __tablename__ = 'operations_log'
