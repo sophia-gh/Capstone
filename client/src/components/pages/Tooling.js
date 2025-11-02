@@ -5,7 +5,7 @@ const Tooling = () => {
   const [queryData, setQueryData] = useState([]);
 
   const fetchData = () => {  
-      fetch("/getDies")
+      fetch("/getAllDies")
       .then (response => response.json())
       .then (data => {setQueryData(data)})
   }
