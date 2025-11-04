@@ -28,9 +28,7 @@ const Login = () => {
       } else {
         setError('Invalid userID or password. Contact admin if you need access.');
       }
-
-    }
-        
+    }   
     catch (error) {
       console.error(error.message)
     }   
@@ -42,7 +40,7 @@ const Login = () => {
             <h2>Tool and Die Management</h2>
             <p>Sign in to access your tool management system</p>
             <form onSubmit={handleSubmit}>
-                <h5>Username</h5>
+                <h5>Employee ID</h5>
                 <input
                 type="number"
                 placeholder="employee ID"

@@ -2,6 +2,7 @@ import argparse
 from flask import Flask, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
 from tables import *
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')    
@@ -13,14 +14,16 @@ db.init_app(app)
 def login():
     data = request.get_json()
     employee_id= data.get('employee_id')
-    password = data.get('password')  
-    statement = db.select(Employees).where(Employees.employee_id == employee_id).where(Employees.password == password)
+    password = data.get('password') 
+    statement = db.select(Employees).where(Employees.employee_id == employee_id).where(Employees.employed == True)
     user_query = db.session.scalars(statement).first()  
-    if not user_query:
+    check_hashed_password = generate_password_hash(password)
+    if not user_query or not check_password_hash(user_query.password, password):
         return jsonify({'user': False})
     session['employee_id'] = user_query.employee_id
     session['first_name'] = user_query.first_name
     session['last_name'] = user_query.last_name
+    session['job_title'] = user_query.job_title
     print(f"Current session: {session}")
     return jsonify({'user': True})
 
@@ -29,8 +32,68 @@ def logout():
     session.pop('employee_id', None)
     session.pop('first_name', None)
     session.pop('last_name', None)
+    session.pop('job_title', None)
     return jsonify({'message': 'Logged out successfully'})
 
+@app.route("/createEmployee", methods=['POST'])
+def create_Employee():
+    try:
+        data = request.get_json()
+        employee_id = data.get('employee_id')
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        job_title = data.get('job_title')
+        password = data.get('password')
+        print(job_title)
+        hashed_password = generate_password_hash(password)  
+        new_employee = Employees(
+            employee_id=employee_id,
+            first_name=first_name,
+            last_name=last_name,
+            password=hashed_password,
+            employed=True,
+            job_title=job_title
+        )
+        db.session.add(new_employee)
+        db.session.commit()
+        return jsonify({'message': 'Employee created successfully'})
+    except:
+        return jsonify({'message': 'Error creating employee'})
+
+@app.route('/lockUnlockEmployee', methods=['POST'])
+def lockUnlock_Employee():
+    data = request.get_json()
+    employee_id = data.get('employee_id')
+    statement = db.select(Employees).where(Employees.employee_id == employee_id)
+    user_query = db.session.scalars(statement).first() 
+    try:
+        if user_query:
+            if user_query.employed == True:
+                user_query.employed = False
+                db.session.commit() 
+            else:
+                user_query.employed = True        
+                db.session.commit()
+        return jsonify({'message': user_query.employed})
+    except:
+        return jsonify({'message': 'Employee not found'})
+
+@app.route('/changeJobTitle', methods=['POST'])
+def change_JobTitle():
+    data = request.get_json()
+    employee_id = data.get('employee_id')
+    new_job_title = data.get('new_job_title')
+    statement = db.select(Employees).where(Employees.employee_id == employee_id)
+    user_query = db.session.scalars(statement).first() 
+    try:
+        if user_query:
+            user_query.job_title = new_job_title
+            db.session.commit()
+            return jsonify({'message': 'Job title changed successfully'})
+    except:
+        return jsonify({'message': 'Employee not found'})
+
+# select * from dies;
 @app.route("/getAllDies") 
 def get_AllDies(): 
     statement = db.select(Dies) 
@@ -38,7 +101,14 @@ def get_AllDies():
     dies_dict = [model_to_dict(Die) for Die in die_query]
     return jsonify(dies_dict)
 
-    # select * from dies where company;
+@app.route('/getAllEmployees')
+def get_AllEmployees():
+    statement = db.select(Employees)
+    employees_query = db.session.scalars(statement).all() 
+    employees_dict = [model_to_dict(employee) for employee in employees_query]
+    return jsonify(employees_dict)
+
+# select * from dies where company;
 @app.route("/getAllDiesFromCompany", methods=['POST'])
 def get_AllDiesFromCompany():
     data = request.get_json()
@@ -48,7 +118,7 @@ def get_AllDiesFromCompany():
     dies_dict = [model_to_dict(Die) for Die in die_query]
     return jsonify(dies_dict)
 
-   #select * from components where tool_number = '607636044-5';
+#select * from components where tool_number = '607636044-5';
 @app.route("/getComponentsForDie", methods=['POST'])
 def get_ComponentsForDie():
     data = request.get_json()
@@ -58,7 +128,7 @@ def get_ComponentsForDie():
     components_dict = [model_to_dict(component) for component in components_query]  
     return jsonify(components_dict) 
     
-    # select * from component_details where tool_number = '607636044-5';
+# select * from component_details where tool_number = '607636044-5';
 @app.route("/getAllComponentDetailsForDie", methods=['POST'])
 def get_AllComponentDetailsForDie():
     data = request.get_json()
@@ -68,7 +138,7 @@ def get_AllComponentDetailsForDie():
     component_details_dict = [model_to_dict(ComponentDetail) for ComponentDetail in component_details_query]
     return jsonify(component_details_dict)
     
-    # select detail_number from component_details where tool_number = '607636044-5';
+# select detail_number from component_details where tool_number = '607636044-5';
 @app.route("/getAllDetailNumbersForDie", methods=['POST'])
 def get_AllDetailNumbersForDie():
     data = request.get_json()
@@ -78,7 +148,7 @@ def get_AllDetailNumbersForDie():
     component_details_dict = [model_to_dict(ComponentDetail) for ComponentDetail in component_details_query]
     return jsonify(component_details_dict)
     
-    # select distinct company from dies;
+# select distinct company from dies;
 @app.route("/getAllCompanies")
 def get_AllCompanies():
     statement = db.select(Dies.company).distinct()
@@ -86,7 +156,7 @@ def get_AllCompanies():
     companies_dict = [model_to_dict(company) for company in companies_query]
     return jsonify(companies_dict)
 
-   # select * from components where status = 'active' and tool_number = '607636044-5'; 
+# select * from components where status = 'active' and tool_number = '607636044-5'; 
 @app.route("/getAllActiveComponentsForDie", methods=['POST'])
 def get_AllActiveComponentsForDie():
     data = request.get_json()

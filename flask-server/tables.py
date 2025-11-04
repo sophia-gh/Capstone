@@ -4,12 +4,20 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import inspect, DateTime, BigInteger, Identity, ForeignKey 
 import datetime
+import enum
 
 class Base(DeclarativeBase):
     pass
 
 db = SQLAlchemy(model_class=Base)
 
+class CurrentState(str, enum.Enum):
+    active = 'active'
+    trash = 'trash'
+    not_current_rev = 'not_current_rev'
+    missing = 'missing'
+    inventory = 'inventory'
+    
 class Components(db.Model):
     __tablename__ = "components"
     tool_number: Mapped[str] = mapped_column(primary_key=True)
@@ -20,8 +28,8 @@ class Components(db.Model):
     lifetime_hits: Mapped[int]
     current_hits: Mapped[int]
     current_height: Mapped[float]
-    # current_state: Mapped[int]
-    
+    current_state: Mapped[CurrentState]    
+
 class ComponentDetails(db.Model):
     __tablename__ = "component_details"
     tool_number: Mapped[str] = mapped_column(primary_key=True)
@@ -35,12 +43,21 @@ class ComponentDetails(db.Model):
     cost: Mapped[float]
     current_revision: Mapped[int]
 
+class JobTitle(str, enum.Enum):
+    press_tech = "press_tech"
+    tool_maker = "tool_maker"
+    engineer = "engineer"
+    tool_manager = "tool_manager"
+    admin = "admin"
+
 class Employees(db.Model):
     __tablename__ = "employees"
     employee_id: Mapped[int] = mapped_column(primary_key=True)
     first_name: Mapped[str]
     last_name: Mapped[str] 
     password: Mapped[str]
+    employed: Mapped[bool]
+    job_title: Mapped[JobTitle] 
 
 class OperationsLog(db.Model):
     __tablename__ = 'operations_log'
@@ -48,12 +65,18 @@ class OperationsLog(db.Model):
     employee_id: Mapped[int] = mapped_column(ForeignKey("employees.employee_id"))
     date: Mapped[datetime.datetime] = mapped_column(DateTime)
 
+class DieStatus(str, enum.Enum):
+    in_production = "in_production"
+    serviced = "serviced"
+    not_serveiced = "not_serviced"
+
 class Dies(db.Model):
     __tablename__ = "dies"
     tool_number: Mapped[str] = mapped_column(primary_key=True)
     punch_depth: Mapped[float]
     material_thickness: Mapped[float]
     company: Mapped[str] =  mapped_column(nullable=False)
+    status: Mapped[DieStatus]
     
 class DeletedComponents(db.Model):
     __tablename__ = "deleted_components" 
