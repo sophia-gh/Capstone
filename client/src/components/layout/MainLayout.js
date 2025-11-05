@@ -11,11 +11,9 @@ const MainLayout = () => {
             <aside className="sidebar">
                 <h1 className="sidebar-title">Navigation</h1>
                 <nav>
-{/*                    <NavLink to="/app" end className="sidebar-link">Home</NavLink> */}
                     <NavLink to="/app/apiCallExample" className="sidebar-link">APICall</NavLink> 
                     <NavLink to="/app/Dashboard" className="sidebar-link">Dashboard</NavLink>
                     <NavLink to="/app/Tooling" className="sidebar-link">Tooling</NavLink>
-                    <NavLink to="/app/Servicing" className="sidebar-link">Servicing</NavLink>
                     <NavLink to="/app/Admin" className="sidebar-link">Admin</NavLink>
 
                 </nav>
