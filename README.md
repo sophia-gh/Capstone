@@ -12,22 +12,22 @@ Github Repository for Capstone Fall 2025 Project
     ``` cmd
     source venv/bin/activate
     ```
-
     *if successfull the tag `(venv)` will appear before the path on the command line* 
+
 4. **in your virtual environment, install Flask**
     ``` cmd
     pip install Flask
     ```
+
 5. **from the virtual environment, run the server.py file**
     ``` cmd
-    python3 server.py
+    python3 server.py --password [your password] --database [your database]
     ```
-    **alternatively run Flask command**
+    **alternatively run Flask command** *not sure if this will work with the command line args*
     ````    
-    flask --app server run --debug
+    flask --app server run --debug 
     ````
-
-    *this will start the server on local host, port 5000 by default*
+    *this will start the server on local host*
 
 6. **in a seperate terminal, navigate to the `client` directory**
 
@@ -39,18 +39,10 @@ Github Repository for Capstone Fall 2025 Project
     ``` cmd
     npm start
     ```
-
     *if successful it will open a browser to the local host url the app is running in*
     *alternatively, click the local host or network link*
 
-9. **the page should display the data stored in the server.py file, should look like this** 
-    ``` 
-    Member 1
-
-    Member 2
-
-    Member 3
-    ```
+9. **the api example page should display the data stored in the server.py file, should look like this** 
     *on this page do `ctrl + shift + i` and click `console` to see console output for debugging*
 
 ## Clean Up After Running
