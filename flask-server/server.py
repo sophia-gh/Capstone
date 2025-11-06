@@ -1,11 +1,11 @@
-import argparse
+
 from flask import Flask, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
 from tables import *
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('config.py')    
+app.config.from_pyfile('config.py')  
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -13,8 +13,8 @@ db.init_app(app)
 @app.route("/login", methods=['POST'])
 def login():
     data = request.get_json()
-    employee_id= data.get('employee_id')
-    password = data.get('password') 
+    employee_id = data.get('employee_id')
+    password = data.get('password')
     statement = db.select(Employees).where(Employees.employee_id == employee_id).where(Employees.employed == True)
     user_query = db.session.scalars(statement).first()  
     check_hashed_password = generate_password_hash(password)
@@ -171,3 +171,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+    
