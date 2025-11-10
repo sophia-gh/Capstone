@@ -1,8 +1,15 @@
-# Capstone
+# Capstone DRAFT VERSION
 Github Repository for Capstone Fall 2025 Project
+
 
 ### To Run Inital Starter code (In WSL Ubuntu)
 1. **navigate to `flask-server` directory**
+2. **create an instance dircectory and a config.py file**
+    ```
+    mkdir instance
+    cd instance
+    nano config.py
+    ```
 2. **create the virtual environment for the flask server**
     ``` cmd
     python3 -m venv venv
@@ -17,13 +24,15 @@ Github Repository for Capstone Fall 2025 Project
 4. **in your virtual environment, install Flask**
     ``` cmd
     pip install Flask
+    pip install psycopg2-binary
+    pip install SQLAlchemy
     ```
 
 5. **from the virtual environment, run the server.py file**
     ``` cmd
-    python3 server.py --password [your password] --database [your database]
+    python3 server.py
     ```
-    **alternatively run Flask command** *not sure if this will work with the command line args*
+    **alternatively run Flask command**
     ````    
     flask --app server run --debug 
     ````
