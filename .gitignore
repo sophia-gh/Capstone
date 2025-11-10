@@ -1,0 +1,8 @@
+/flask-server/venv
+__pycache__/
+*.pyc
+
+.venv/
+
+
+instance/
