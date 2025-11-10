@@ -1,3 +1,4 @@
+from __future__ import annotations
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, Bundle
