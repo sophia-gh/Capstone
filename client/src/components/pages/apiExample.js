@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function APICall() {
   const [queryData, setQueryData] = useState()
   const navigate = useNavigate();
-  
+
   const fetchDies = async (e) => {
   // dieQuery is example information to be sent to flask route and used to query database
   const dieQuery = {
@@ -25,7 +25,7 @@ function APICall() {
       }
       const result = await response.json()
       setQueryData(result)
-    } 
+} 
     catch (error) {
       console.error(error.message)
     }   
