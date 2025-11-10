@@ -24,7 +24,7 @@ const Admin = () => {
   }
   useEffect(() => { fetchEmployees(); }, []);
 
-  const handledNewEmployee = async (e) => { 
+  const handleNewEmployee = async (e) => { 
       e.preventDefault(); 
       if (password === confirmPassword) {
     try {
@@ -87,7 +87,7 @@ const Admin = () => {
   } 
   return (
    <div>
-      <h1 className="main-header">Tooling</h1>
+      <h1 className="main-header">Employees</h1>
       <div className="main-content">
         <div className="table-card">
           {queryData.length > 0 ? (
@@ -115,7 +115,7 @@ const Admin = () => {
             </tbody>
           </table>
           ) : (
-          <p>No dies loaded yet.</p>
+          <p>No employees loaded yet.</p>
           )}
         </div>
       </div>
@@ -123,7 +123,7 @@ const Admin = () => {
     <div className='main-container' style={{justifyContent: 'center', alignItems: 'center'}}>
         <div className='container'>
             <h2>New Employee</h2> 
-            <form onSubmit={handledNewEmployee}>
+            <form onSubmit={handleNewEmployee}>
                 <h5>employee ID</h5>
                 <input
                 type="number"
