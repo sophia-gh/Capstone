@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from tables import *
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime 
-
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')  
 
@@ -229,18 +228,18 @@ def end_production_run():
     ).values(current_hits = Components.current_hits + number_of_hits, lifetime_hits = Components.lifetime_hits + number_of_hits
     ).returning(Components.current_hits, Components.lifetime_hits)
     updateHitsQuery = db.session.execute(statement2).first()
-    try:
-        if updateHitsQuery:
-            statement3 = db.update(Dies).where(Dies.tool_number == tool_number).values(status = DieStatus.not_serviced).returning(Dies.tool_number, Dies.status)
-            updateDieStateQuery = db.session.execute(statement3).first()
-            print(updateDieStateQuery)
-            print('ss')
-            if updateDieStateQuery:
-                print('yes')
-                db.session.commit()
-                return jsonify({'message' : 'production run ended successfully'})
-    except:
-        return jsonify('error stopping production run')
+    # try:
+    if updateHitsQuery:
+        statement3 = db.update(Dies).where(Dies.tool_number == tool_number).values(status = DieStatus.not_serviced).returning(Dies.tool_number, Dies.status)
+        updateDieStateQuery = db.session.execute(statement3).first()
+        print(updateDieStateQuery)
+        print('ss')
+        if updateDieStateQuery:
+            print('yes')
+            db.session.commit()
+            return jsonify('production run ended successfully')
+    # except:
+    return jsonify('error stopping production run')
 
 
 @app.route('/grindComponent', methods=['POST'])
