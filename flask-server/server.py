@@ -167,7 +167,7 @@ def get_AllActiveComponentsForDie():
     status = data.get('status')
     statement = db.select(Components.status).where(Components.status == 'active').where(Components.tool_number == tool_number)
     component_details_query = db.session.scalars(statement).all() 
-    component_dict = [model_to_dict(Component) for Component in component_details_query]
+    component_details_dict = [model_to_dict(Component) for Component in component_details_query]
     return jsonify(component_details_dict)
 
 # select
@@ -198,12 +198,14 @@ def start_production_run():
         func.count(case((Components.current_state == CurrentState.active, 1))).label('active_component_count')
         ).join(Components
         ).group_by(ComponentDetails.detail_number, ComponentDetails.number_used_in_tool
-        ).where(ComponentDetails.tool_number == tool_number and Component.tool_number == tool_number) 
+        ).where(ComponentDetails.tool_number == tool_number and Components.tool_number == tool_number) 
     componentDetailsQuery = db.session.execute(statement2).all()
     try:
         ActiveCountList = {} 
         if componentDetailsQuery:
             for detailNumber in componentDetailsQuery:
+                print(f"Checking detail {detailNumber}: used={detailNumber.number_used_in_tool}, active={detailNumber.active_component_count}")
+                
                 if detailNumber.number_used_in_tool != detailNumber.active_component_count:
                     ActiveCountList[detailNumber.detail_number] = detailNumber.active_component_count 
             if ActiveCountList:
@@ -228,7 +230,7 @@ def end_production_run():
             print('not in production')
             return jsonify('not in production')
     statement2 = db.update(Components
-    ).where(Components.tool_number == tool_number and Component.current_state == CurrentState.active
+    ).where(Components.tool_number == tool_number and Components.current_state == CurrentState.active
     ).values(current_hits = Components.current_hits + number_of_hits, lifetime_hits = Components.lifetime_hits + number_of_hits
     ).returning(Components.current_hits, Components.lifetime_hits)
     updateHitsQuery = db.session.execute(statement2).first()
