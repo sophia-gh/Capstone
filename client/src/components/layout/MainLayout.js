@@ -31,6 +31,7 @@ const MainLayout = () => {
 
                 {/* Main Page Content */}
                 <main className="main-content">
+                    <div id="modal-root"></div>
                     <Outlet />
                 </main>
             </div>

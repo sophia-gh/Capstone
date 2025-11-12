@@ -18,7 +18,7 @@ function App() {
           <Route path ="/app/apiCallExample" element = {<APICall />} />
           <Route path ="/app/Dashboard" element = {<Dashboard />} />
           <Route path ="/app/Tooling" element = {<Tooling />} />
-          <Route path ="/app/Tooling/Dies" element = {<Dies />} />
+          <Route path ="/app/Dies/:toolNumber" element = {<Dies />} />
           <Route path ="/app/Admin" element = {<Admin />} />
         </Route>
       </Routes>

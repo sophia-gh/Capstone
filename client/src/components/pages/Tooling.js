@@ -1,55 +1,80 @@
 import React, { useState, useEffect } from 'react';
-import Button from '../layout/button.js';
+import { useNavigate } from "react-router-dom";
 
 const Tooling = () => {
-  const [queryData, setQueryData] = useState([]);
+  const [dies, setDies] = useState([]);
+  const [loadingDies, setLoadingDies] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const fetchData = () => {  
-      fetch("/getDies")
-      .then (response => response.json())
-      .then (data => {setQueryData(data)})
-  }
+  useEffect(() =>  {  
+      const fetchDies = async () => {
+      setLoadingDies(true);
+      setError(null);
 
-  useEffect(() => {
-  fetchData();
-}, []);
+      try {
+        const response = await fetch("/getAllDies");
+        if (!response.ok) {
+          throw new Error(`HTTP error status: ${response.status}`);
+        }
+        const result = await response.json();
+        setDies(result);
+      } catch (error) {
+        console.error("Error fetching dies:", error.message);
+        setError("Failed to load dies.");
+      } finally {
+        setLoadingDies(false);
+      }
+    };
+fetchDies();
+  }, []);
 
   return (
-    <div>
-      <h1 className="main-header">Tooling</h1>
-      <div className="main-content">
-        <div className="table-card">
-      {queryData.length > 0 ? (
-        <table className="activity-table">
-          <thead>
-            <tr>
-              {Object.keys(queryData[0]).map((key) => (
-                <th key={key}>
-                  {key}
-                </th>
+<div className="tooling-page" style={{ display: "flex", gap: "2rem" }}>
+      <div style={{ flex: 1 }}>
+        <h1 className="main-header">Select Die </h1>
 
-              ))}
-            </tr>
-          </thead>                
-          <tbody>
-            {queryData.map((die, index) => (
-              <tr key={index} className="card">
-                {Object.values(die).map((value, id) => (
-                  <td key={id}>
-                    {String(value)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No dies loaded yet.</p>
-      )}
+        {loadingDies ? (
+          <p>Loading dies...</p>
+        ) : error ? (
+          <p style={{ color: "red" }}>{error}</p>
+        ) : (
+          <div className="table-card">
+  <table className="activity-table">
+    <thead>
+      <tr>
+        <th>Tool Number</th>
+        <th>Company</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {dies.map((die) => (
+        <tr key={die.tool_number}>
+          <td>{die.tool_number}</td>
+          <td>{die.company}</td>
+          <td>{die.status}</td>
+          <td>
+            <button
+              onClick={() => navigate(`/app/Dies/${die.tool_number}`)}
+              style={{
+                color: "var(--color-text)",
+                border: "solid var(--color-border)",
+                backgroundColor: "var(--color-card)",
+                boxShadow: "var(--shadow-card)",
+                cursor: "pointer",
+              }}
+            >View</button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+        )}
       </div>
       </div>
-    </div>
   );
-}
-
+};
 export default Tooling;
