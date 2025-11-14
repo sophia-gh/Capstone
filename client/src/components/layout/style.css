@@ -363,3 +363,49 @@ th{
   justify-content: flex-end;
   margin-top: 1rem;
 }
+
+.component-health-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;  
+  width: 300px;
+  background-color: var(--color-card);
+  border-radius: var(--border-radius);
+  padding: var(--padding-base);
+  box-shadow: var(--shadow-card);
+  border: .5px solid var(--color-border);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.component-health-bar {
+  flex: 1; 
+  position: relative; 
+  margin-top: 0rem;
+  height: 25px;
+  width: 100%;
+  background: #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.left-text,
+.right-text {
+  white-space: nowrap;
+}
+
+.hover-text{
+  display: none;
+  position: relative;
+  background-color: #33333358;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  justify-content: flex-end;
+}
+.component-health-bar:hover .hover-text{
+  display: flex;
+}

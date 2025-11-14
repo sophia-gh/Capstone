@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
+import { ComponentHealthBar } from '../layout/component_health_bar';
 
 
 const Dies = () => {
@@ -288,6 +289,7 @@ const dieInfo = dies.find(d => d.tool_number === toolNumber);
                 <th>Current Hits</th>
                 <th>Lifetime Hits</th>
                 <th>Current State</th>
+                <th>Component Height</th>
               </tr>
             </thead>
             <tbody>
@@ -301,6 +303,7 @@ const dieInfo = dies.find(d => d.tool_number === toolNumber);
                   <td>{comp.current_hits ?? 0}</td>
                   <td>{comp.lifetime_hits ?? 0}</td>
                   <td>{comp.current_state}</td>
+                  <td><ComponentHealthBar component={comp} /></td>
                 </tr>
               ))}
             </tbody>
