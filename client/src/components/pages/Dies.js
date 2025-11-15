@@ -303,7 +303,7 @@ const dieInfo = dies.find(d => d.tool_number === toolNumber);
                   <td>{comp.current_hits ?? 0}</td>
                   <td>{comp.lifetime_hits ?? 0}</td>
                   <td>{comp.current_state}</td>
-                  <td><ComponentHealthBar component={comp} /></td>
+                  <td><ComponentHealthBar component={comp}/></td>
                 </tr>
               ))}
             </tbody>
