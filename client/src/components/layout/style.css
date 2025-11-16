@@ -9,6 +9,8 @@
   --color-sidebar-hover: oklch(96.715% 0.00011 271.152);
   --color-sidebar-active: #fffffe;
 
+  --shadow-color: rgba(0, 0, 0, 0.15);
+  --shadow-color2: rgba(163, 163, 163, 0.16);
   --shadow-sidebar: 6px 0 14px rgba(0, 0, 0, 0.08);
   --shadow-header: 0 4px 10px rgba(0, 0, 0, 0.08);
   --shadow-card: -10px -10px 14px rgba(255, 255, 255, 0.64),
@@ -47,9 +49,9 @@
 }
 
 .sidebar:hover {
-  box-shadow: 4px 0 10px -5px rgba(0, 0, 0, 0.15),
-    inset -4px -4px 5px rgba(255, 255, 255),
-    inset 4px 4px 5px rgba(163, 163, 163, 0.16);
+  box-shadow: 4px 0 10px -5px var(--shadow-color),
+    inset -4px -4px 5px var(--color-card),
+    inset 4px 4px 5px var(--shadow-color2);
 }
 
 .sidebar-title {
@@ -76,9 +78,9 @@
   background-color: var(--color-sidebar-active);
   box-shadow:
     -4px -4px 5px rgba(255, 255, 255, 0.8),
-    4px 4px 5px rgba(163, 163, 163, 0.16),
-    inset -4px -4px 5px rgba(255, 255, 255),
-    inset 4px 4px 5px rgba(163, 163, 163, 0.16);
+    4px 4px 5px var(--shadow-color2),
+    inset -4px -4px 5px var(--color-card),
+    inset 4px 4px 5px var(--shadow-color2);
 }
 
 .sidebar-nest.active {
@@ -90,6 +92,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .top-header {
@@ -103,9 +106,9 @@
 }
 
 .top-header:hover{
-  box-shadow: 0 4px 10px -5px rgba(0, 0, 0, 0.15),
-      inset -4px -4px 5px rgba(255, 255, 255),
-      inset 4px 4px 5px rgba(163, 163, 163, 0.16);
+  box-shadow: 0 4px 10px -5px var(--shadow-color),
+      inset -4px -4px 5px var(--color-card),
+      inset 4px 4px 5px var(--shadow-color2);
 }
 
 .logo {
@@ -139,6 +142,8 @@
 .main-content {
   padding: 2rem;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 .main-header {
@@ -186,7 +191,7 @@ button {
   padding: 0.5rem;
   font-size: 1rem;
   background-color: #b3b3b3;
-  color: white;
+  color: var(--color-card);
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
@@ -232,7 +237,7 @@ h5 {
 .card-header h3 {
   text-shadow: 
     -1px -1px 2px rgba(255, 255, 255),
-    1px 1px 2px rgba(163, 163, 163, 0.16);
+    1px 1px 2px var(--shadow-color2);
   font-size: 1rem;
   font-weight: 500;
   margin-left: 0.7rem;
@@ -273,9 +278,7 @@ th{
 }
 
 .activity-table {
-  width: 100%;
   border-collapse: collapse;
-  border-spacing: 0;
 }
 
 .activity-table th {
@@ -285,6 +288,7 @@ th{
   padding: 0.6rem;
   font-size: 1rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
 }
 
 .activity-table td {
@@ -292,6 +296,27 @@ th{
   padding: 0.6rem;
   font-size: 0.9rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
+}
+
+.card-grid,
+.die-header-grid,
+.table-card {
+  min-width: 0;
+}
+
+.table-scroll {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid transparent; /* forces proper layout containment */
+}
+
+.table-scroll th,
+.table-scroll td {
+  white-space: nowrap;
 }
 
 .table-card {
@@ -302,7 +327,7 @@ th{
   border-radius: var(--border-radius);
   border: .5px solid var(--color-border);
   max-height: 50rem;
-  overflow-y: auto;
+  overflow-y: auto; 
 }
 
 .die-header-grid {
@@ -350,7 +375,7 @@ th{
 }
 
 .modal-card {
-  background-color: white;
+  background-color: var(--color-card);
   border-radius: 12px;
   padding: 2rem;
   width: 400px;
@@ -396,7 +421,7 @@ th{
   display: none;
   position: relative;
   background-color: #33333358;
-  color: white;
+  color: var(--color-card);
   padding: 5px 10px;
   border-radius: 4px;
   white-space: nowrap;
@@ -408,4 +433,29 @@ th{
 }
 .component-health-bar:hover .hover-text{
   display: flex;
+}
+
+.table-card-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background-color: var(--color-card);
+  padding: 1rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.add-button {
+  background-color: #4caf50;
+  color: var(--color-card);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  border: none;
+}
+
+.add-button:hover {
+  background-color: #43a047;
 }

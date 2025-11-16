@@ -18,6 +18,9 @@ const Dies = () => {
   const [isProducing, setIsProducing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [hits, setHits] = useState("");
+  const [showAddComponentModal, setShowAddComponentModal] = useState(false);
+  const [newDetailNumber, setNewDetailNumber] = useState("");
+  const [newComponentNumber, setNewComponentNumber] = useState("");
 
   // this is the dies fetch used in tooling, it's needed here to get die status for the header, lightweight enough that it doesn't matter
   useEffect(() =>  {  
@@ -176,6 +179,30 @@ fetchDies();
 
 const dieInfo = dies.find(d => d.tool_number === toolNumber);
 
+const handleAddComponent = async () => {
+  try {
+    const response = await fetch("/addComponent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tool_number: toolNumber,
+        detail_number: newDetailNumber,
+        component_number: newComponentNumber,
+      }),
+    });
+    const result = await response.json();
+    if (result.message === "added component successfully") {
+      alert("Component added!");
+      setShowAddComponentModal(false);
+    } else {
+      alert("Error: " + JSON.stringify(result));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
@@ -207,15 +234,9 @@ const dieInfo = dies.find(d => d.tool_number === toolNumber);
 
       <ul className="die-detail-list">
         <li><strong>Tool Number:</strong> {toolNumber}</li>
-        <li><strong>Detail Number:</strong> {detail?.detail_number}</li>
-        <li><strong>Min Height:</strong> {detail?.min_height}</li>
-        <li><strong>Nominal Height:</strong> {detail?.nominal_height}</li>
-        <li><strong>Low Quantity:</strong> {detail?.low_quantity}</li>
-        <li><strong>Sharpen Frequency:</strong> {detail?.frequency_to_sharpen}</li>
-        <li><strong>Description:</strong> {detail?.description || "N/A"}</li>
-        <li><strong>Number Used:</strong> {detail?.number_used_in_tool}</li>
-        <li><strong>Cost:</strong> {detail?.cost}</li>
-        <li><strong>Current Revision:</strong> {detail?.current_revision}</li>
+        <li><strong>Company:</strong> {dieInfo?.company}</li>
+        <li><strong>Punch Depth:</strong> {dieInfo?.punch_depth}</li>
+        <li><strong>Material Thickness:</strong> {dieInfo?.material_thickness}</li>
       </ul>
     </div>
     <div className="card">
@@ -231,8 +252,8 @@ const dieInfo = dies.find(d => d.tool_number === toolNumber);
             <h3>Confirm Start</h3>
             <p>Start production for die <strong>{toolNumber}</strong>?</p>
             <div>
-              <button onClick={handleStartProduction}>Confirm</button>
               <button className="cancel" onClick={() => setShowModal(false)}>Cancel</button>
+              <button onClick={handleStartProduction}>Confirm</button>
             </div>
           </div>
         </div>
@@ -272,15 +293,33 @@ const dieInfo = dies.find(d => d.tool_number === toolNumber);
   </div>
       {/* Components Table, you've seen this one, currently adding filtering to it */}
       <div className="table-card">
-        <h2>Components for {toolNumber}</h2>
+        <div className="table-card-header">
+          <h2>Components for {toolNumber}</h2>
+          <button
+            className="add-button"
+            onClick={() => setShowAddComponentModal(true)}
+          >
+            + Add Component
+          </button>
+        </div>
         {loadingComponents ? (
           <p>Loading components...</p>
         ) : components.length === 0 ? (
           <p>No components found for this die.</p>
         ) : (
+          <div className="table-scroll">
           <table className="activity-table">
             <thead>
               <tr>
+                <th>Detail Number</th>
+                <th>Min Height</th>
+                <th>Nominal Height</th>
+                <th>Low Quantity</th>
+                <th>Sharpen Frequency</th>
+                <th>Description</th>
+                <th>Number Used</th>
+                <th>Cost</th>
+                <th>Current Revision</th>
                 <th>Build #</th>
                 <th>Component #</th>
                 <th>Detail #</th>
@@ -295,6 +334,15 @@ const dieInfo = dies.find(d => d.tool_number === toolNumber);
             <tbody>
               {components.map((comp, idx) => (
                 <tr key={`${comp.tool_number}-${idx}`}>
+                  <td>{detail?.detail_number}</td>
+                  <td>{detail?.min_height}</td>
+                  <td>{detail?.nominal_height}</td>
+                  <td>{detail?.low_quantity}</td>
+                  <td>{detail?.frequency_to_sharpen}</td>
+                  <td>{detail?.description || "N/A"}</td>
+                  <td>{detail?.number_used_in_tool}</td>
+                  <td>{detail?.cost}</td>
+                  <td>{detail?.current_revision}</td>
                   <td>{comp.build_number}</td>
                   <td>{comp.component_number}</td>
                   <td>{comp.detail_number}</td>
@@ -308,6 +356,7 @@ const dieInfo = dies.find(d => d.tool_number === toolNumber);
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 
@@ -343,6 +392,55 @@ const dieInfo = dies.find(d => d.tool_number === toolNumber);
           </table>
         )}
       </div>
+      {showAddComponentModal &&
+        createPortal(
+          <div className="modal-overlay">
+            <div className="modal-card">
+              <h3>Add Component</h3>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                <label>Detail Number</label>
+                <input
+                  type="text"
+                  value={newDetailNumber}
+                  onChange={(e) => setNewDetailNumber(e.target.value)}
+                />
+
+                <label>Component Number</label>
+                <input
+                  type="text"
+                  value={newComponentNumber}
+                  onChange={(e) => setNewComponentNumber(e.target.value)}
+                />
+
+                <div className="modal-actions">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("Add button clicked");
+                      handleAddComponent();
+                    }}
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel"
+                    onClick={() => setShowAddComponentModal(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>,
+          document.getElementById("modal-root")
+        )
+      }
 
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>

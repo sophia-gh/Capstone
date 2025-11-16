@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from tables import *
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime 
+import traceback
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')  
@@ -290,6 +291,52 @@ def grind_Component():
                     return jsonify({'message': f'removed {material_removed} successfully'})
     except:
         return jsonify({'message': 'Component not found'})
+
+# FUCK MY BIG FAT CHUNGUS LIFE WTF IS INSERT COMPONENT IN THE DB WHY IS THERE A TABLE FOR INSERT COMPONENT OH MY GOD WHY CAN'T I JUST LIVE I TRIED SO HARD ON THIS SHIT AND THIS IS HOW YOU REPAY ME OH MY FUCKING GOD IM SO SICK AND TIRED I WANNA BE DONE WITH THIS PROJECT BRO I AM SO SICK AND MY PHLEGM IS DISGUSTING I CANT STOP COUGHING GET ME OUT OF HEREERREREE
+# ill admit this comment seems a little extreme after removing the operations log attempt i had in here, but just know i made an attempt and it did not work and now we pay the price. 
+@app.route('/addComponent', methods=['POST'])
+def add_component():
+    data = request.get_json()
+    tool_number = data.get('tool_number')
+    detail_number = data.get('detail_number')
+    component_number = data.get('component_number')
+    try:
+        if not tool_number or not detail_number or not component_number:
+            return jsonify({'message': 'Missing required fields'})
+
+        statement = db.select(ComponentDetails).where(
+            ComponentDetails.tool_number == tool_number,
+            ComponentDetails.detail_number == detail_number
+        )
+        detail_obj = db.session.scalars(statement).first()
+        if not detail_obj:
+            return jsonify({'message': 'Detail number not found for this die'})
+        nominal_height = detail_obj.nominal_height
+        statement2 = db.select(func.max(Components.build_number)).where(
+            Components.tool_number == tool_number
+        )
+        last_build = db.session.scalar(statement2)
+        last_build_int = int(last_build) if last_build is not None else 0
+        next_build_number = last_build_int + 1
+        next_build_number_str = str(next_build_number)
+        new_component = Components(
+            tool_number=tool_number,
+            detail_number=detail_number,
+            component_number=component_number,
+            build_number=next_build_number_str,
+            revision=1,
+            lifetime_hits=0,
+            current_hits=0,
+            current_height=nominal_height,
+            current_state=CurrentState.active
+        )
+        db.session.add(new_component)
+        db.session.commit()
+        return jsonify({'message': 'added component successfully'})
+    except:
+        traceback.print_exc()
+        return jsonify({'message': 'error adding component'})
+
 
 if __name__ == "__main__":
     with app.app_context():
