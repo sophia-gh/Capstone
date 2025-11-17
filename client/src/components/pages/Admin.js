@@ -12,6 +12,10 @@ const Admin = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [employeeId2, setEmployeeId2] = useState('');
   const [queryData, setQueryData] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [showActionsModal, setShowActionsModal] = useState(false);
+  const [activeTab, setActiveTab] = useState("profile");
 
   const fetchEmployees = async () => {  
       const response = await fetch("/getAllEmployees") 
@@ -87,29 +91,51 @@ const Admin = () => {
   } 
   return (
    <div>
-      <h1 className="main-header">Employees</h1>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "1rem"
+      }}>
+
+        <h1 className="main-header">Employees</h1>
+        <button className="add-button" onClick={() => setShowAddModal(true)}>
+          + Add Employee
+        </button>
+
+      </div>
       <div className="main-content">
         <div className="table-card">
           {queryData.length > 0 ? (
             <table className="activity-table">
             <thead>
               <tr>
-                {Object.keys(queryData[0]).map((key) => (
-                  <th key={key}>
-                    {key}
-                  </th>
-
+                {Object.keys(queryData[0])
+                  .filter((key) => key !== "password")
+                  .map((key) => (
+                    <th key={key}>{key}</th>
                 ))}
+                <th>Actions</th>
               </tr>
             </thead>                
             <tbody>
-              {queryData.map((die, index) => (
+              {queryData.map((employee, index) => (
                 <tr key={index} className="card">
-                  {Object.values(die).map((value, id) => (
-                    <td key={id}>
-                      {String(value)}
-                    </td>
+                  {Object.entries(employee)
+                    .filter(([key]) => key !== "password")
+                    .map(([key, value]) => (
+                      <td key={key}>{String(value)}</td>
                   ))}
+                 <td>
+                    <button className="actions-btn" onClick={() => {
+                        setSelectedEmployee(employee);
+                        setActiveTab("profile");
+                        setShowActionsModal(true);
+                      }}>
+                      ⋮
+                    </button>
+                  </td>
+
                 </tr>
               ))}
             </tbody>
@@ -120,8 +146,9 @@ const Admin = () => {
         </div>
       </div>
 
-    <div className='main-container' style={{justifyContent: 'center', alignItems: 'center'}}>
-        <div className='container'>
+    {showAddModal && (
+    <div className= "modal-overlay">
+        <div className="modal-card">
             <h2>New Employee</h2> 
             <form onSubmit={handleNewEmployee}>
                 <h5>employee ID</h5>
@@ -184,33 +211,99 @@ const Admin = () => {
                 required
                /> 
 
+                <div className="modal-actions">
+                <button type="button" className="cancel" onClick={() => setShowAddModal(false)}>
+                Cancel
+                </button>
+
                 <button type="submit">Create New Employee</button>
+              </div>
             </form>
             {error && <p className='error'>{error}</p>}
         </div>
+    </div>
+    )}
 
-    <div className='second-container' style={{justifyContent: 'center', alignItems: 'center'}}>
-        <div className='container'>
-            <h2>Disable Employee</h2> 
-            <form onSubmit={handleSubmit}>
-                <h5>employee ID</h5>
-                <input
-                type="number"
-                placeholder="employee ID"
-                value={employeeId2}
-                onChange={(e) => setEmployeeId2(e.target.value)}
-                maxLength={20}
-                required
-                />
-                <button type="submit">Submit</button>
-            </form>
-            {error2 && <p className='error'>{error2}</p>}
+    {showActionsModal && (
+      <div className="modal-overlay">
+        <div className="modal-card" style={{ width: "400px", display: "flex", flexDirection: "column", position: "relative" }}>
+          
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "1rem"
+          }}>
+            <h2>{selectedEmployee.first_name} {selectedEmployee.last_name}</h2>
+            <button className="cancelX" onClick={() => setShowActionsModal(false)}>✕</button>
+          </div>
+
+          <div className="employee-tabs">
+            <button className={activeTab === "profile" ? "active" : ""}
+             onClick={() => setActiveTab("profile")}>
+              Profile
+            </button>
+            <button className={activeTab === "edit" ? "active" : ""} onClick={() => setActiveTab("edit")}>
+              Edit
+            </button>
+            <button className={activeTab === "password" ? "active" : ""} onClick={() => setActiveTab("password")}>
+              Password
+            </button>
+            <button className={activeTab === "status" ? "active" : ""} onClick={() => setActiveTab("status")}>
+              Status
+            </button>
+          </div>
+
+          <div className="employee-tab-content" style={{ marginTop: "1rem" }}>
+            {activeTab === "profile" && (
+              <div>
+                <p><strong>ID:</strong> {selectedEmployee.employee_id}</p>
+                <p><strong>Name:</strong> {selectedEmployee.first_name} {selectedEmployee.last_name}</p>
+                <p><strong>Job Title:</strong> {selectedEmployee.job_title}</p>
+                <p><strong>Status:</strong> {selectedEmployee.employed ? "Active" : "Disabled"}</p>
+              </div>
+            )}
+
+            {activeTab === "edit" && (
+              <div>
+                <h3>Edit Employee</h3>
+                <p>Nada</p>
+              </div>
+            )}
+
+            {activeTab === "password" && (
+              <div>
+                <h3>Reset Password</h3>
+                <p>Nothing here yet</p>
+              </div>
+            )}
+
+            {activeTab === "status" && (
+              <div>
+                <h3>Enable/Disable Employee</h3>
+                <p>
+                  This account is currently:{" "}
+                  <strong>{selectedEmployee.employed ? "Active" : "Disabled"}</strong>
+                </p>
+                <button style={{ marginTop: "1rem" }} onClick={() => {
+                    setEmployeeId2(selectedEmployee.employee_id);
+                    handleSubmit(); 
+                }}>
+                  {selectedEmployee.employed ? "Disable" : "Enable"} Employee
+                </button>
+
+                {error2 && <p className="error">{error2}</p>}
+              </div>
+            )}
+
+          </div>
         </div>
-    </div>
-    </div>
-</div> 
+      </div>
+    )}
+    </div>  
   );
-}
+};  
+
 
 
 export default Admin;

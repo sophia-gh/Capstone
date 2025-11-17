@@ -230,7 +230,7 @@ const sortedFilteredComponents = React.useMemo(() => {
       color: dieInfo?.status === "serviced" ? "#155724" : "#721c24",
       border: "1px solid",
       borderColor: dieInfo?.status === "serviced" ? "#c3e6cb" : "#f5c6cb",
-      borderRadius: "12px",
+      borderRadius: "10px",
       padding: "0.35rem 0.9rem",
       fontWeight: "bold",
       fontSize: "0.9rem",

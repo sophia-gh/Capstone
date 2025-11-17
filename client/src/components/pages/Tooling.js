@@ -58,7 +58,7 @@ const sortedFilteredDies = [...filteredDies].sort((a, b) => {
                 <option value="Eaton">Eaton</option>
                 <option value="Pontiac_Coil">Pontiac_Coil</option>
                 <option value="Brose">Brose</option>
-                <option value="Thermodisc ">Thermodisc</option>
+                <option value="Thermodisc">Thermodisc</option>
                 <option value="Gentex">Gentex</option>
             </select>
             <select value={filterMode} onChange={(e) => setFilterMode(e.target.value)}>

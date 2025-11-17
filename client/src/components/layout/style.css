@@ -274,13 +274,14 @@ th{
   position: sticky;
   top: 0;
   z-index: 1;
-  background-color: var(--color-header-bg);
+  background-color: var(--color-card);
 }
 
 .activity-table {
   border-collapse: collapse;
   width: 100%;
   border-spacing: 0;
+  background-color: var(--color-card);
 }
 
 .activity-table th {
@@ -313,7 +314,6 @@ th{
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  border: 1px solid transparent; /* forces proper layout containment */
 }
 
 .table-scroll th,
@@ -327,7 +327,6 @@ th{
   padding-left: 0.5rem;
   box-shadow: var(--shadow-card);
   border-radius: var(--border-radius);
-  border: .5px solid var(--color-border);
   max-height: 50rem;
   overflow-y: auto; 
 }
@@ -376,6 +375,22 @@ option {
   margin: 0 0.5rem;
 }
 
+.cancelX {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: var(--color-text);
+}
+
+.cancelX:hover {
+  background: none;
+  color: red;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -393,6 +408,10 @@ option {
   background-color: var(--color-card);
   border-radius: 12px;
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 400px;
   max-width: 90%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -400,9 +419,26 @@ option {
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  gap: 0.5rem;
   margin-top: 1rem;
+  width: 100%;
 }
+
+.actions-btn {
+  background: none;
+  color: var(--color-sidebar-text);
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.actions-btn:hover {
+  background-color: rgba(0,0,0,0.1);
+}
+
 
 .component-health-bar-container {
   display: flex;
@@ -485,4 +521,23 @@ option {
   justify-content: space-between;
   align-items: center;
   display: flex;
+}
+
+.employee-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.employee-tabs button {
+  padding: 0.5rem 1rem;
+  background: var(--color-header-bg);
+  color: var(--color-text-bold);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.employee-tabs button.active {
+  background: var(--color-sidebar-border);
+  font-weight: bold;
 }
