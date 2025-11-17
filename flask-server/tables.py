@@ -3,7 +3,6 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, Bundle
 from sqlalchemy import inspect, Date, BigInteger, Identity, ForeignKey, Integer, Sequence, func, case, and_
-import datetime
 from datetime import date
 import enum
 from typing import List

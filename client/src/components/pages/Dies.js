@@ -23,6 +23,17 @@ const Dies = () => {
   const [newComponentNumber, setNewComponentNumber] = useState("");
   const [sortMode, setSortMode] = useState("status");
   const [filterMode, setFilterMode] = useState("all");
+  const [showActionsModal, setShowActionsModal] = useState(false);
+  const [activeTab, setActiveTab] = useState("component");
+  // can i realistically add more?
+  const [toolNumber1, setToolNumber] = useState('');
+  const [detailNumber, setDetailNumber] = useState('');
+  const [buildNumber, setBuildNumber] = useState('');
+  const [componentNumber, setComponentNumber] = useState('');
+  const [materialRemoved, setMaterialRemoved] = useState('');
+  const [numberOfHits, setNumberOfHits] = useState('')
+  const [toolNumber2, setToolNumber2] = useState('')
+  // yes, yes I can
 
   // this is the dies fetch used in tooling, it's needed here to get die status for the header, lightweight enough that it doesn't matter
   useEffect(() =>  {  
@@ -46,6 +57,31 @@ const Dies = () => {
     };
 fetchDies();
   }, []);
+
+  const handleGrind = async (e) => { 
+    e.preventDefault(); 
+
+    try {
+      const response = await fetch("/grindComponent", {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify({tool_number: toolNumber, detail_number: selectedComponent.detailNumber, build_number: selectedComponent.buildNumber, component_number: selectedComponent.componentNumber, material_removed: materialRemoved})
+      })
+    
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const result = await response.json()
+      console.log(result)     
+      alert("Component successfully ground!");
+      setShowActionsModal(false);
+      setMaterialRemoved("");
+    }   
+    catch (error) {
+      console.error(error.message);
+      alert("Error grinding component.");
+    }   
+  }
 
   // Start Production
   const handleStartProduction = async () => {
@@ -180,6 +216,8 @@ fetchDies();
 }, [toolNumber]);
 
 const dieInfo = dies.find(d => d.tool_number === toolNumber);
+const componentsInfo = components.find(c => c.tool_number === toolNumber);
+const [selectedComponent, setSelectedComponent] = useState(null);
 
 const handleAddComponent = async () => {
   try {
@@ -359,6 +397,7 @@ const sortedFilteredComponents = React.useMemo(() => {
                 <th>Lifetime Hits</th>
                 <th>Current State</th>
                 <th>Component Height</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -382,6 +421,18 @@ const sortedFilteredComponents = React.useMemo(() => {
                   <td>{comp.lifetime_hits ?? 0}</td>
                   <td>{comp.current_state}</td>
                   <td><ComponentHealthBar component={comp}/></td>
+                  <td>
+                    <button className="actions-btn" onClick={() => {
+                        setActiveTab("component");
+                        setShowActionsModal(true);
+                        setSelectedComponent(comp);
+                        setDetailNumber(comp.detail_number);
+                        setBuildNumber(comp.build_number);
+                        setComponentNumber(comp.component_number);
+                      }}>
+                      ⋮
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -472,6 +523,85 @@ const sortedFilteredComponents = React.useMemo(() => {
         )
       }
 
+      {showActionsModal && (
+      <div className="modal-overlay">
+        <div className="modal-card" style={{ width: "400px", display: "flex", flexDirection: "column", position: "relative" }}>
+          
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "1rem"
+          }}>
+            <h2>Component Actions</h2>
+            <button className="cancelX" onClick={() => setShowActionsModal(false)}>✕</button>
+          </div>
+
+          <div className="employee-tabs">
+            <button className={activeTab === "component" ? "active" : ""}
+             onClick={() => setActiveTab("component")}>
+              Component
+            </button>
+            <button className={activeTab === "grind" ? "active" : ""} onClick={() => setActiveTab("grind")}>
+              Grind
+            </button>
+            <button className={activeTab === "update" ? "active" : ""} onClick={() => setActiveTab("update")}>
+              Update
+            </button>
+            <button className={activeTab === "remove" ? "active" : ""} onClick={() => setActiveTab("remove")}>
+              Remove
+            </button>
+          </div>
+
+          <div className="employee-tab-content" style={{ marginTop: "1rem" }}>
+            {activeTab === "component" && (
+              <div>
+                <p><strong>Build Number:</strong> {componentsInfo.build_number}</p>
+                <p><strong>Component Number:</strong> {componentsInfo.component_number}</p>
+                <p><strong>Detail Number:</strong> {componentsInfo.detail_number}</p>
+                <p><strong>Revision:</strong> {componentsInfo.revision ?? "-"}</p>
+              </div>
+            )}
+
+            {activeTab === "grind" && selectedComponent && (
+              <div>
+                <p><strong>Tool Number:</strong> {toolNumber}</p>
+                <p><strong>Detail Number:</strong> {selectedComponent.detail_number}</p>
+                <p><strong>Build Number:</strong> {selectedComponent.build_number}</p>
+                <p><strong>Component Number:</strong> {selectedComponent.component_number}</p>
+
+                <form onSubmit={handleGrind}>
+                <p><strong>Material Removed</strong></p>
+                <input
+                type="text"
+                placeholder="Material Removed"
+                value={materialRemoved}
+                onChange={(e) => setMaterialRemoved(e.target.value)}
+                required
+                />
+                <button type="submit">Grind</button>
+            </form>
+              </div>
+            )}
+
+            {activeTab === "update" && (
+              <div>
+                <h3>Update Component</h3>
+                <p>Nothing here yet</p>
+              </div>
+            )}
+
+            {activeTab === "remove" && (
+              <div>
+                <h3>Remove component</h3>
+                <p>Not implemented yet</p>
+              </div>
+            )}
+
+          </div>
+        </div>
+      </div>
+    )}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
