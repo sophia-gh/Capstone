@@ -9,7 +9,7 @@ app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')  
 app.config.from_pyfile('config.py')  
 
-db = SQLAlchemy(model_class=Base)
+
 db.init_app(app)
 
 @app.route("/login", methods=['POST'])
@@ -108,7 +108,7 @@ def get_AllDies():
 @app.route("/getAllComponentsForAllDies", methods=["GET"])
 def get_all_components_for_all_dies():
     comps = Components.query.all()
-    return jsonify([c.to_dict() for c in comps])
+    return jsonify([model_to_dict(c) for c in comps])
 
 @app.route('/getAllEmployees')
 def get_AllEmployees():
