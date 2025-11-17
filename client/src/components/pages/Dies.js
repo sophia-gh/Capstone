@@ -21,6 +21,8 @@ const Dies = () => {
   const [showAddComponentModal, setShowAddComponentModal] = useState(false);
   const [newDetailNumber, setNewDetailNumber] = useState("");
   const [newComponentNumber, setNewComponentNumber] = useState("");
+  const [sortMode, setSortMode] = useState("status");
+  const [filterMode, setFilterMode] = useState("all");
 
   // this is the dies fetch used in tooling, it's needed here to get die status for the header, lightweight enough that it doesn't matter
   useEffect(() =>  {  
@@ -202,6 +204,17 @@ const handleAddComponent = async () => {
   }
 };
 
+const sortedFilteredComponents = React.useMemo(() => {
+  let filtered = [...components];
+  if (filterMode !== "all") {filtered = filtered.filter(c => c.current_state === filterMode)};
+  if (sortMode === "status") {
+    const order = { active: 1, inventory: 2, inactive: 3 };
+    filtered.sort((a, b) => order[a.current_state] - order[b.current_state]);
+  }
+  if (sortMode === "hits_desc") {filtered.sort((a, b) => (b.current_hits ?? 0) - (a.current_hits ?? 0))};
+  if (sortMode === "height_asc") {filtered.sort((a, b) => (a.current_height ?? 0) - (b.current_height ?? 0))};
+  return filtered;
+}, [components, sortMode, filterMode]);
 
 
   return (
@@ -240,10 +253,14 @@ const handleAddComponent = async () => {
       </ul>
     </div>
     <div className="card">
-      <h2>Production Control</h2>
-      <button onClick={() => setShowModal(true)}>
-        {isProducing ? "End Production" : "Start Production"}
-      </button>
+      <div className="production-header">
+      <h2>Production Control</h2>    
+      <div className="production">
+        <button onClick={() => setShowModal(true)}>
+          {isProducing ? "End Production" : "Start Production"}
+        </button>
+      </div> 
+      </div>
 
       {/* Start Confirmation 'modal', I was lazy with this one at first bc i didn't want to fix the rendering issue, however the divs can just share the html vars now if we want */}
       {showModal && !isProducing && (
@@ -251,7 +268,7 @@ const handleAddComponent = async () => {
           <div>
             <h3>Confirm Start</h3>
             <p>Start production for die <strong>{toolNumber}</strong>?</p>
-            <div>
+            <div className="production">
               <button className="cancel" onClick={() => setShowModal(false)}>Cancel</button>
               <button onClick={handleStartProduction}>Confirm</button>
             </div>
@@ -295,12 +312,25 @@ const handleAddComponent = async () => {
       <div className="table-card">
         <div className="table-card-header">
           <h2>Components for {toolNumber}</h2>
+          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          <select value={filterMode} onChange={(e) => setFilterMode(e.target.value)}>
+            <option value="all">All States</option>
+            <option value="active">Active</option>
+            <option value="inventory">Inventory</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <select value={sortMode} onChange={(e) => setSortMode(e.target.value)}>
+            <option value="status">Sort: Active, Inventory, Inactive</option>
+            <option value="hits_desc">Sort: Current Hits (High to Low)</option>
+            <option value="height_asc">Sort: Current Height (Low to High)</option>
+          </select>
           <button
             className="add-button"
             onClick={() => setShowAddComponentModal(true)}
           >
             + Add Component
           </button>
+          </div>
         </div>
         {loadingComponents ? (
           <p>Loading components...</p>
@@ -332,7 +362,7 @@ const handleAddComponent = async () => {
               </tr>
             </thead>
             <tbody>
-              {components.map((comp, idx) => (
+              {sortedFilteredComponents.map((comp, idx) => (
                 <tr key={`${comp.tool_number}-${idx}`}>
                   <td>{detail?.detail_number}</td>
                   <td>{detail?.min_height}</td>

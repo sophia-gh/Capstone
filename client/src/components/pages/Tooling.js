@@ -6,6 +6,9 @@ const Tooling = () => {
   const [loadingDies, setLoadingDies] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [filterMode, setFilterMode] = useState("all");
+  const [sortMode, setSortMode] = useState("tool_number");
+  const [companyFilter, setCompanyFilter] = useState("all");
 
   useEffect(() =>  {  
       const fetchDies = async () => {
@@ -29,11 +32,49 @@ const Tooling = () => {
 fetchDies();
   }, []);
 
-  return (
-<div className="tooling-page" style={{ display: "flex", gap: "2rem" }}>
-      <div style={{ flex: 1 }}>
-        <h1 className="main-header">Select Die </h1>
+const filteredDies = dies.filter((die) => {
+    const statusMatch = filterMode === "all" ? true : die.status === filterMode;
+    const companyMatch = companyFilter === "all" ? true : die.company === companyFilter;
+    return statusMatch && companyMatch;
+});
 
+const sortedFilteredDies = [...filteredDies].sort((a, b) => {
+    if (sortMode === "tool_number") return a.tool_number.localeCompare(b.tool_number);
+    if (sortMode === "company") return a.company.localeCompare(b.company);
+    if (sortMode === "status") return a.status.localeCompare(b.status);
+    return 0;
+});
+
+
+  return (
+<div className="tooling-page"  style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div style={{ flex: 1 }}>
+        <div style= {{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h1 className="main-header">Select Die </h1>
+        <div style={{ display: "flex", gap: "1rem" }}>
+            <select value={companyFilter} onChange={(e) => setCompanyFilter(e.target.value)}>
+                <option value="all">Companies</option>
+                <option value="Superb">Superb</option>
+                <option value="Eaton">Eaton</option>
+                <option value="Pontiac_Coil">Pontiac_Coil</option>
+                <option value="Brose">Brose</option>
+                <option value="Thermodisc ">Thermodisc</option>
+                <option value="Gentex">Gentex</option>
+            </select>
+            <select value={filterMode} onChange={(e) => setFilterMode(e.target.value)}>
+              <option value="all">Status</option>
+              <option value="in_production">In Production</option>
+              <option value="not_serviced">Not Serviced</option>
+              <option value="serviced">Serviced</option>
+            </select>
+            <select value={sortMode} onChange={(e) => setSortMode(e.target.value)}>
+              <option value="tool_number">Sort: Tool Number</option>
+              <option value="company">Sort: Company</option>
+              <option value="status">Sort: Status</option>
+            </select>
+          </div>
+        </div>
+        </div>
         {loadingDies ? (
           <p>Loading dies...</p>
         ) : error ? (
@@ -50,7 +91,7 @@ fetchDies();
       </tr>
     </thead>
     <tbody>
-      {dies.map((die) => (
+      {sortedFilteredDies.map((die) => (
         <tr key={die.tool_number}>
           <td>{die.tool_number}</td>
           <td>{die.company}</td>
@@ -73,8 +114,7 @@ fetchDies();
   </table>
 </div>
         )}
-      </div>
-      </div>
+</div>
   );
 };
 export default Tooling;

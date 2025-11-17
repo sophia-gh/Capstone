@@ -279,6 +279,8 @@ th{
 
 .activity-table {
   border-collapse: collapse;
+  width: 100%;
+  border-spacing: 0;
 }
 
 .activity-table th {
@@ -328,6 +330,19 @@ th{
   border: .5px solid var(--color-border);
   max-height: 50rem;
   overflow-y: auto; 
+}
+
+select {
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  font-size: 0.9rem;
+}
+
+option {
+  background: var(--color-card);
+  color: var(--color-text);
 }
 
 .die-header-grid {
@@ -458,4 +473,16 @@ th{
 
 .add-button:hover {
   background-color: #43a047;
+}
+
+.production {
+  justify-content: right;
+  align-items: right;
+  display: flex;
+}
+
+.production-header {
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
 }
