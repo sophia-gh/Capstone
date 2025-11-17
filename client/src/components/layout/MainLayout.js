@@ -4,7 +4,6 @@ import { FiBell, FiUser } from 'react-icons/fi';
 import { Outlet } from 'react-router-dom';
 import {LogoutButton} from './logoutButton.js';
 import './style.css';
-import logo from '../../assets/Superb_logo.png'
 
 const MainLayout = () => {
     const [showModal, setShowModal] = useState(false);
@@ -24,7 +23,6 @@ const MainLayout = () => {
 
             <div className="content-area">
                 <header className="top-header">
-                    <img src={logo} alt="superb-logo" className="logo"/>
                     <h1 className="system-title">Tool and Die Inventory</h1>
                     <div className="header-icons">
                             <div className="user-container">

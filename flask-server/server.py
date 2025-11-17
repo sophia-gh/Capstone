@@ -292,8 +292,6 @@ def grind_Component():
     except:
         return jsonify({'message': 'Component not found'})
 
-# FUCK MY BIG FAT CHUNGUS LIFE WTF IS INSERT COMPONENT IN THE DB WHY IS THERE A TABLE FOR INSERT COMPONENT OH MY GOD WHY CAN'T I JUST LIVE I TRIED SO HARD ON THIS SHIT AND THIS IS HOW YOU REPAY ME OH MY FUCKING GOD IM SO SICK AND TIRED I WANNA BE DONE WITH THIS PROJECT BRO I AM SO SICK AND MY PHLEGM IS DISGUSTING I CANT STOP COUGHING GET ME OUT OF HEREERREREE
-# ill admit this comment seems a little extreme after removing the operations log attempt i had in here, but just know i made an attempt and it did not work and now we pay the price. 
 @app.route('/addComponent', methods=['POST'])
 def add_component():
     data = request.get_json()
