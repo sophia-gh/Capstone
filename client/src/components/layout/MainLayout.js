@@ -35,6 +35,9 @@ const MainLayout = () => {
                     <h1 className="system-title">Tool and Die Inventory</h1>
                     <div className="header-icons">
                             <div className="user-container">
+                            <span className="user-name">
+                                {user?.first_name} {user?.last_name}
+                            </span>
                             <button className='headerIconButton' onClick={() => setShowModal(showModal ? false : true)}>
                               <FiUser className="icon" />
                             </button>
