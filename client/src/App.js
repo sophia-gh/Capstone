@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import APICall from './components/pages/apiExample';
+import APICall from './components/pages/archivedPages/apiExample';
 import MainLayout from './components/layout/MainLayout';
 import Footer from './components/layout/Footer';
 import Dashboard from './components/pages/Dashboard';
@@ -15,7 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />}/>
         <Route path="/app" element={<MainLayout />}>
-          <Route path ="/app/apiCallExample" element = {<APICall />} />
+          {/*<Route path ="/app/apiCallExample" element = {<APICall />} />*/}
           <Route path ="/app/Dashboard" element = {<Dashboard />} />
           <Route path ="/app/Tooling" element = {<Tooling />} />
           <Route path ="/app/Dies/:toolNumber" element = {<Dies />} />
