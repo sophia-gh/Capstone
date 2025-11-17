@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import APICall from './components/pages/archivedPages/apiExample';
 import MainLayout from './components/layout/MainLayout';
@@ -28,33 +27,3 @@ function App() {
 }
 
 export default App;
-
-// intial tutorial app function
-/* 
-function App() {
-
-  const [data, setData] = useState([{}])
-
-  useEffect(() => {
-      fetch("/members").then (
-        res => res.json()
-      ).then (
-          data => {
-            setData(data)
-            console.log(data)
-          }
-      )
-  }, []) //only runs once
-
-  return (
-    <div>
-      <h1>Die List</h1>
-      <pre>
-      <Button onClick={fetchData}></Button>
-      {JSON.stringify(queryData, null, 2)}
-      </pre>
-    </div>
-  )
-}
-
-export default App */

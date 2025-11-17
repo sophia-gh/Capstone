@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
 import { FiUser } from 'react-icons/fi';
 import { Outlet } from 'react-router-dom';
@@ -8,6 +8,16 @@ import './style.css';
 const MainLayout = () => {
     const [showModal, setShowModal] = useState(false);
     
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const fetchUser = async () => {
+            const res = await fetch("/currentUser");
+            const data = await res.json();
+            if (data.user !== false) setUser(data);
+        };
+        fetchUser();
+    }, []);
+
     return (
         <div className="main-container">
             <aside className="sidebar">
@@ -17,7 +27,6 @@ const MainLayout = () => {
                     <NavLink to="/app/Dashboard" className="sidebar-link">Dashboard</NavLink>
                     <NavLink to="/app/Tooling" className="sidebar-link">Tooling</NavLink>
                     <NavLink to="/app/Admin" className="sidebar-link">Admin</NavLink>
-
                 </nav>
             </aside>
 

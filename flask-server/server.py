@@ -105,6 +105,11 @@ def get_AllDies():
     dies_dict = [model_to_dict(Die) for Die in die_query]
     return jsonify(dies_dict)
 
+@app.route("/getAllComponentsForAllDies", methods=["GET"])
+def get_all_components_for_all_dies():
+    comps = Components.query.all()
+    return jsonify([c.to_dict() for c in comps])
+
 @app.route('/getAllEmployees')
 def get_AllEmployees():
     statement = db.select(Employees)
@@ -335,6 +340,16 @@ def add_component():
         traceback.print_exc()
         return jsonify({'message': 'error adding component'})
 
+@app.route('/currentUser')
+def current_user():
+    if 'employee_id' in session:
+        return jsonify({
+            'employee_id': session['employee_id'],
+            'first_name': session['first_name'],
+            'last_name': session['last_name'],
+            'job_title': session['job_title']
+        })
+    return jsonify({'user': False})
 
 if __name__ == "__main__":
     with app.app_context():
