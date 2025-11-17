@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { ComponentHealthBar } from '../layout/component_health_bar';
 
@@ -26,13 +25,10 @@ const Dies = () => {
   const [showActionsModal, setShowActionsModal] = useState(false);
   const [activeTab, setActiveTab] = useState("component");
   // can i realistically add more?
-  const [toolNumber1, setToolNumber] = useState('');
   const [detailNumber, setDetailNumber] = useState('');
   const [buildNumber, setBuildNumber] = useState('');
   const [componentNumber, setComponentNumber] = useState('');
   const [materialRemoved, setMaterialRemoved] = useState('');
-  const [numberOfHits, setNumberOfHits] = useState('')
-  const [toolNumber2, setToolNumber2] = useState('')
   // yes, yes I can
 
   // this is the dies fetch used in tooling, it's needed here to get die status for the header, lightweight enough that it doesn't matter
@@ -556,10 +552,10 @@ const sortedFilteredComponents = React.useMemo(() => {
           <div className="employee-tab-content" style={{ marginTop: "1rem" }}>
             {activeTab === "component" && (
               <div>
-                <p><strong>Build Number:</strong> {componentsInfo.build_number}</p>
-                <p><strong>Component Number:</strong> {componentsInfo.component_number}</p>
-                <p><strong>Detail Number:</strong> {componentsInfo.detail_number}</p>
-                <p><strong>Revision:</strong> {componentsInfo.revision ?? "-"}</p>
+                <p><strong>Build Number:</strong> {selectedComponent.build_number}</p>
+                <p><strong>Component Number:</strong> {selectedComponent.component_number}</p>
+                <p><strong>Detail Number:</strong> {selectedComponent.detail_number}</p>
+                <p><strong>Revision:</strong> {selectedComponent.revision ?? "-"}</p>
               </div>
             )}
 

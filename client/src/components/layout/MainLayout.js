@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { NavLink } from "react-router-dom";
-import { FiBell, FiUser } from 'react-icons/fi';
+import { FiUser } from 'react-icons/fi';
 import { Outlet } from 'react-router-dom';
 import {LogoutButton} from './logoutButton.js';
 import './style.css';
