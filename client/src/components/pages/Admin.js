@@ -49,6 +49,11 @@ const Admin = () => {
       setJobTitle('');
       setPassword('');
       setConfirmPassword('');
+      if(result.message === 'Employee created successfully') {
+        alert("Employee added!");
+        setShowAddModal(false);
+        fetchEmployees();
+      }
     } 
     catch (error) {
       console.error(error.message)
@@ -61,8 +66,6 @@ const Admin = () => {
   } 
 
   const handleSubmit= async (e) => { 
-      e.preventDefault(); 
-  
     try {
       const response = await fetch("/lockUnlockEmployee", {
         method: 'POST', 
@@ -78,17 +81,29 @@ const Admin = () => {
       setEmployeeId2('');
       if (result.message === false) {
         setError2('Employee Disabled')
+        alert("Employee Disabled");
       } else if (result.message === true) {
         setError2('Employee Enabled')
+        alert("Employee Enabled");
       } else {
         setError2('Employee not found')
+        alert("Employee not found");
       }
+      fetchEmployees();
 
     } 
     catch (error) {
       console.error(error.message)
     }    
   } 
+
+  useEffect(() => {
+    const clearOnClick = () => setError2('');
+    window.addEventListener("click", clearOnClick);
+
+    return () => window.removeEventListener("click", clearOnClick);
+}, []);
+
   return (
    <div>
       <div style={{
@@ -110,22 +125,29 @@ const Admin = () => {
             <table className="activity-table">
             <thead>
               <tr>
+                {/*
                 {Object.keys(queryData[0])
                   .filter((key) => key !== "password")
                   .map((key) => (
                     <th key={key}>{key}</th>
-                ))}
+                ))}*/}
+                <th>Employee ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Job Title</th>
+                <th>Employed</th>
                 <th>Actions</th>
               </tr>
             </thead>                
             <tbody>
               {queryData.map((employee, index) => (
                 <tr key={index} className="card">
-                  {Object.entries(employee)
-                    .filter(([key]) => key !== "password")
-                    .map(([key, value]) => (
-                      <td key={key}>{String(value)}</td>
-                  ))}
+                  <td>{employee.employee_id}</td>
+                  <td>{employee.first_name}</td>
+                  <td>{employee.last_name}</td>
+                  <td>{employee.job_title}</td>
+                  <td>{employee.employed ? "Active" : "Disabled"}</td>
+
                  <td>
                     <button className="actions-btn" onClick={() => {
                         setSelectedEmployee(employee);
@@ -216,7 +238,7 @@ const Admin = () => {
                 Cancel
                 </button>
 
-                <button type="submit">Create New Employee</button>
+                <button type="submit" >Create New Employee</button>
               </div>
             </form>
             {error && <p className='error'>{error}</p>}
@@ -285,14 +307,15 @@ const Admin = () => {
                   This account is currently:{" "}
                   <strong>{selectedEmployee.employed ? "Active" : "Disabled"}</strong>
                 </p>
-                <button style={{ marginTop: "1rem" }} onClick={() => {
+                <button type="button" style={{ marginTop: "1rem" }} onClick={(e) => {
                     setEmployeeId2(selectedEmployee.employee_id);
-                    handleSubmit(); 
+                    handleSubmit(e); 
                 }}>
                   {selectedEmployee.employed ? "Disable" : "Enable"} Employee
+                  
                 </button>
 
-                {error2 && <p className="error">{error2}</p>}
+                {error2 && <p className="message">{error2}</p>}
               </div>
             )}
 
