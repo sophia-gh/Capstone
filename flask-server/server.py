@@ -1,16 +1,18 @@
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from tables import *
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime 
 import traceback
 
-app = Flask(__name__, instance_relative_config=True)
+app = Flask(__name__, static_folder='../client/build', static_url_path='/', instance_relative_config=True)
 app.config.from_pyfile('config.py')  
-app.config.from_pyfile('config.py')  
-
 
 db.init_app(app)
+
+@app.route("/")
+def react_build():
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route("/login", methods=['POST'])
 def login():
