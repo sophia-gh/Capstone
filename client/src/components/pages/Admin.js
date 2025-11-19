@@ -16,6 +16,11 @@ const Admin = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showActionsModal, setShowActionsModal] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [newFirstName, setNewFirstName] = useState('');
+  const [newLastName, setNewLastName] = useState('');
+  const [newJobTitle, setNewJobTitle] = useState('');
 
   const fetchEmployees = async () => {  
       const response = await fetch("/getAllEmployees") 
@@ -103,6 +108,71 @@ const Admin = () => {
 
     return () => window.removeEventListener("click", clearOnClick);
 }, []);
+
+const handleNewPassword = async (e) => { 
+      e.preventDefault(); 
+      if (newPassword === confirmNewPassword) {
+    try {
+      const response = await fetch("/newPassword", {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify({employee_id: selectedEmployee.employee_id, new_password: newPassword})
+      })
+   
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const result = await response.json()
+      console.log(result)
+      setEmployeeId('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+      if(result.message === 'New password set successfully') {
+        alert("Password set!");
+      } else {
+        alert("Error setting password.");
+      }
+    } 
+    catch (error) {
+      console.error(error.message)
+    }   
+    } else {
+      setError('Passwords do not match');
+      setEmployeeId('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+    }
+  } 
+
+  const handleEditProfile = async (e) => { 
+      e.preventDefault(); 
+    try {
+      const response = await fetch("/editProfile", {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify({first_name: newFirstName, last_name: newLastName, job_title: newJobTitle, employee_id: selectedEmployee.employee_id})
+      })
+   
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const result = await response.json()
+      console.log(result)
+      setEmployeeId('');
+      setNewFirstName('');
+      setNewLastName('');
+      setNewJobTitle('');
+      if(result.message === 'Profile edited successfully') {
+        alert("Profile edited!");
+      } else {
+        alert("Error editing profile.");
+      }
+      fetchEmployees();
+    } 
+    catch (error) {
+      console.error(error.message)
+    }   
+  } 
 
   return (
    <div>
@@ -289,14 +359,84 @@ const Admin = () => {
             {activeTab === "edit" && (
               <div>
                 <h3>Edit Employee</h3>
-                <p>Nada</p>
-              </div>
+                  <form onSubmit={handleEditProfile}>
+                    {/* 
+                  <h5>employee ID</h5>
+                  <input
+                  type="number"
+                  placeholder=""
+                  value={selectedEmployee.employee_id}
+                  onChange={(e) => setEmployeeId(e.target.value)}
+                  maxLength={20}
+                  required
+                  />*/}
+
+                  <h5>First Name</h5>
+                  <input
+                  type="text"
+                  placeholder={selectedEmployee.first_name}
+                  value={newFirstName}
+                  onChange={(e) => setNewFirstName(e.target.value)}
+                  maxLength={20}
+                  required
+                  />
+
+                  <h5>Last Name</h5>
+                  <input
+                  type="text"
+                  placeholder={selectedEmployee.last_name}
+                  value={newLastName}
+                  onChange={(e) => setNewLastName(e.target.value)}
+                  maxLength={20}
+                  required
+                  />
+                  
+                  <h5>Job Title</h5>
+                  <input
+                  type="text"
+                  placeholder={selectedEmployee.job_title}
+                  value={newJobTitle}
+                  onChange={(e) => setNewJobTitle(e.target.value)} 
+                  maxLength={20}
+                  required
+                  />
+
+                  <div className="modal-actions">
+                  <button type="submit" >Edit Profile</button>
+                </div>
+              </form>
+              {error && <p className='error'>{error}</p>}
+          </div>
             )}
 
             {activeTab === "password" && (
               <div>
                 <h3>Reset Password</h3>
-                <p>Nothing here yet</p>
+                <form onSubmit={handleNewPassword}>
+                  <p><strong>ID:</strong> {selectedEmployee.employee_id}</p>
+                  <h5>New Password</h5>
+                  <input
+                    type="password" 
+                    placeholder="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    maxLength={20}
+                    required
+                  />
+                  <h5>Confirm New Password</h5>
+                  <input
+                    type="password"   
+                    placeholder="Confirm New Password"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}    
+                    maxLength={20}
+                    required
+                  />
+                  <div className="modal-actions" style={{ marginTop: "1rem" }}>
+                    <button type="submit">Set New Password</button>
+                  </div>
+                  {error && <p className='error'>{error}</p>}
+                </form>
               </div>
             )}
 
