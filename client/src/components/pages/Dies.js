@@ -30,6 +30,7 @@ const Dies = () => {
   const [componentNumber, setComponentNumber] = useState('');
   const [materialRemoved, setMaterialRemoved] = useState('');
   // yes, yes I can
+  const [newBuildNumber, setNewBuildNumber] = useState('');
 
   // this is the dies fetch used in tooling, it's needed here to get die status for the header, lightweight enough that it doesn't matter
   useEffect(() =>  {  
@@ -224,6 +225,7 @@ const handleAddComponent = async () => {
         tool_number: toolNumber,
         detail_number: newDetailNumber,
         component_number: newComponentNumber,
+        build_number: newBuildNumber,
       }),
     });
     const result = await response.json();
@@ -492,6 +494,13 @@ const sortedFilteredComponents = React.useMemo(() => {
                   type="text"
                   value={newComponentNumber}
                   onChange={(e) => setNewComponentNumber(e.target.value)}
+                />
+
+                <label>Build Number</label>
+                <input
+                  type="text"
+                  value={newBuildNumber}
+                  onChange={(e) => setNewBuildNumber(e.target.value)}
                 />
 
                 <div className="modal-actions">

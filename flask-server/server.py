@@ -294,6 +294,7 @@ def add_component():
     tool_number = data.get('tool_number')
     detail_number = data.get('detail_number')
     component_number = data.get('component_number')
+    build_number = data.get('build_number')
     try:
         if not tool_number or not detail_number or not component_number:
             return jsonify({'message': 'Missing required fields'})
@@ -306,18 +307,11 @@ def add_component():
         if not detail_obj:
             return jsonify({'message': 'Detail number not found for this die'})
         nominal_height = detail_obj.nominal_height
-        statement2 = db.select(func.max(Components.build_number)).where(
-            Components.tool_number == tool_number
-        )
-        last_build = db.session.scalar(statement2)
-        last_build_int = int(last_build) if last_build is not None else 0
-        next_build_number = last_build_int + 1
-        next_build_number_str = str(next_build_number)
         new_component = Components(
             tool_number=tool_number,
             detail_number=detail_number,
             component_number=component_number,
-            build_number=next_build_number_str,
+            build_number=build_number,
             revision=1,
             lifetime_hits=0,
             current_hits=0,
