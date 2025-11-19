@@ -178,17 +178,6 @@ def get_AllActiveComponentsForDie():
     component_details_dict = [model_to_dict(Component) for Component in component_details_query]
     return jsonify(component_details_dict)
 
-# select
-#         t1.detail_number, 
-#         t1.number_used_in_tool, 
-#         COUNT(case when t2.current_state = 'active'::status then 1 end) as active_components 
-# from 
-# 	component_details as t1 
-# left join 
-# 	components as t2 on t1.tool_number = t2.tool_number and t1.detail_number = t2.detail_number
-# where 
-# 	t1.tool_number = '607636044-5' group by t1.detail_number, t1.number_used_in_tool;
-
 @app.route('/startProductionRun', methods=['POST'])
 def start_production_run():
     data  = request.get_json()
