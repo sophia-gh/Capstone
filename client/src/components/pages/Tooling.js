@@ -98,7 +98,7 @@ const sortedFilteredDies = [...filteredDies].sort((a, b) => {
           <td>{die.status}</td>
           <td>
             <button
-              onClick={() => navigate(`/app/Dies/${die.tool_number}`)}
+              onClick={() => navigate(`/Dies/${die.tool_number}`)}
               style={{
                 color: "var(--color-text)",
                 border: "solid var(--color-border)",

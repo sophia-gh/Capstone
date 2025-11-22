@@ -13,7 +13,7 @@ db.init_app(app)
 @app.route("/")
 def react_build():
     return send_from_directory(app.static_folder, 'index.html')
-
+    
 @app.route("/login", methods=['POST'])
 def login():
     data = request.get_json()
@@ -31,7 +31,7 @@ def login():
     session['last_name'] = user_query.last_name
     session['job_title'] = user_query.job_title
     print(f"Current session: {session}")
-    return jsonify({'user': True})
+    return jsonify({'user': True, 'job_title': session['job_title']})
 
 @app.route('/logout')
 def logout():
@@ -178,17 +178,6 @@ def get_AllActiveComponentsForDie():
     component_details_dict = [model_to_dict(Component) for Component in component_details_query]
     return jsonify(component_details_dict)
 
-# select
-#         t1.detail_number, 
-#         t1.number_used_in_tool, 
-#         COUNT(case when t2.current_state = 'active'::status then 1 end) as active_components 
-# from 
-# 	component_details as t1 
-# left join 
-# 	components as t2 on t1.tool_number = t2.tool_number and t1.detail_number = t2.detail_number
-# where 
-# 	t1.tool_number = '607636044-5' group by t1.detail_number, t1.number_used_in_tool;
-
 @app.route('/startProductionRun', methods=['POST'])
 def start_production_run():
     data  = request.get_json()
@@ -254,7 +243,6 @@ def end_production_run():
                 return jsonify({'message' : 'production run ended successfully'})
     except:
         return jsonify('error stopping production run')
-
 
 @app.route('/grindComponent', methods=['POST'])
 def grind_Component():

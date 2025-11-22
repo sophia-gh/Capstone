@@ -53,7 +53,7 @@ const Dashboard = () => {
       ) : (
         <>
       <section className="card-grid">
-        <div className="card" onClick={() => navigate("/app/Tooling")} style={{ cursor: "pointer" }}>
+        <div className="card" onClick={() => navigate("/Tooling")} style={{ cursor: "pointer" }}>
           <div className="card-header">
             <h3>Total Dies</h3>
           </div>

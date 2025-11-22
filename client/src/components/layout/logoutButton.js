@@ -1,10 +1,13 @@
  import React from 'react';
  import { useNavigate } from 'react-router-dom';
  import './style.css';
+ import { useAuth } from '../AuthContext';
 
     function LogoutButton({text}) {
 
         const navigate = useNavigate();
+        const authenticate = useAuth();
+        
         const logOut = async () => {
             try {
             const response = await fetch("/logout")
@@ -14,7 +17,9 @@
                 }
                 const result = await response.json()
                 console.log(result.message) 
-                navigate('/')
+                authenticate.logout();
+                authenticate.setJobTitle('');
+                navigate('/login')
             } 
             catch (error) {
                 console.error(error.message)
