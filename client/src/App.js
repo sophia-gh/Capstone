@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import APICall from './components/pages/archivedPages/apiExample';
+// import APICall from './components/pages/archivedPages/apiExample';
 import MainLayout from './components/layout/MainLayout';
 import Footer from './components/layout/Footer';
 import Dashboard from './components/pages/Dashboard';

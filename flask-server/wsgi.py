@@ -1,4 +1,7 @@
-from server import app
+import sys
 
-if __name__ == '__main__':
-    app.run()
+sys.path.insert(0, './flaskr')
+
+from flaskr import create_app
+
+app = create_app()

@@ -1,17 +1,11 @@
 from __future__ import annotations
-from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, Bundle
+from sqlalchemy.orm import Mapped, mapped_column, relationship, Bundle
 from sqlalchemy import inspect, Date, BigInteger, Identity, ForeignKey, Integer, Sequence, func, case, and_
 from datetime import date
 import enum
 from typing import List
-
-
-class Base(DeclarativeBase):
-    pass
-
-db = SQLAlchemy(model_class=Base)
+from .extensions import db
 
 class CurrentState(str, enum.Enum):
     active = 'active'
@@ -180,11 +174,3 @@ class UpdateComponentState(db.Model):
 def model_to_dict(obj): 
     return {c.key: getattr(obj, c.key) for c in db.inspect(obj).mapper.column_attrs}
 
-class DictBundle(Bundle):
-    def create_row_processor(self, query, procs, labels):
-        "Override create_row_processor to return values as dictionaries"
-
-        def proc(row):
-            return dict(zip(labels, (proc(row) for proc in procs)))
-
-        return proc
