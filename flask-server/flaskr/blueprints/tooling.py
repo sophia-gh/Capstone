@@ -5,7 +5,14 @@ import traceback
 
 tooling_bp = Blueprint('tooling_bp', __name__)
 
+
+
+@tooling_bp.route("/getAllComponentsForAllDies", methods=["GET"])
+def get_all_components_for_all_dies():
+    comps = Components.query.all()
+    return jsonify([model_to_dict(c) for c in comps])
 # select * from dies where company;
+
 @tooling_bp.route("/getAllDiesFromCompany", methods=['POST'])
 def get_AllDiesFromCompany():
     data = request.get_json()
@@ -114,3 +121,4 @@ def get_AllDies():
     die_query = db.session.scalars(statement).all() 
     dies_dict = [model_to_dict(Die) for Die in die_query]
     return jsonify(dies_dict)
+
