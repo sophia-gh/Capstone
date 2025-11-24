@@ -448,21 +448,19 @@ const sortedFilteredComponents = React.useMemo(() => {
           <table className="activity-table">
             <thead>
               <tr>
+                <th>Operation id</th>
                 <th>Date</th>
-                <th>Operation #</th>
                 <th>Description</th>
-                <th>Operator</th>
-                <th>Status</th>
+                <th>Employee id</th>
               </tr>
             </thead>
             <tbody>
               {operations.map((op, idx) => (
                 <tr key={`${op.id}-${idx}`}>
+                  <td>{op.operation_id}</td>
                   <td>{op.date}</td>
-                  <td>{op.operation_number}</td>
                   <td>{op.description}</td>
-                  <td>{op.operator}</td>
-                  <td>{op.status}</td>
+                  <td>{op.employee_id}</td>
                 </tr>
               ))}
             </tbody>

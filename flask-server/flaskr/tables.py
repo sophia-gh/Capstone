@@ -67,7 +67,7 @@ class OperationsLog(db.Model):
     parent: Mapped[Employees] = relationship(back_populates='children')
     child: Mapped["InsertComponent"] = relationship(back_populates='parent')
     child2: Mapped["InsertComponentDetails"] = relationship(back_populates='parent')
-    child3: Mapped["UpdateComponentsDetails"] = relationship(back_populates='parent')
+    child3: Mapped["UpdateComponentDetails"] = relationship(back_populates='parent')
     child4: Mapped["UpdateComponentCurrentHeight"] = relationship(back_populates='parent')
     child5: Mapped["UpdateComponentRevision"] = relationship(back_populates='parent')
     child6: Mapped["UpdateComponentState"] = relationship(back_populates='parent')
@@ -113,7 +113,7 @@ class InsertComponentDetails(db.Model):
     build_number: Mapped[str] = mapped_column(primary_key=True)
     parent: Mapped[OperationsLog] = relationship(back_populates='child2')
 
-class UpdateComponentsDetails(db.Model):
+class UpdateComponentDetails(db.Model):
     __tablename__ = "update_component_details" 
     operation_id: Mapped[int] = mapped_column(ForeignKey('operations_log.operation_id'), primary_key=True)
     tool_number: Mapped[str] = mapped_column(primary_key=True)   

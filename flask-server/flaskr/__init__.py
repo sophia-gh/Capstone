@@ -7,7 +7,7 @@ from .blueprints.admin import admin_bp
 from flask import send_from_directory
 
 def create_app():
-    app = Flask(__name__, static_folder='../client/build', static_url_path='/', instance_relative_config=True)
+    app = Flask(__name__, static_folder='../../client/build', static_url_path='/', instance_relative_config=True)
     app.config.from_pyfile('config.py')  
     db.init_app(app)
     app.register_blueprint(actions_bp)

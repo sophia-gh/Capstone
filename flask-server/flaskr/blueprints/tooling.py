@@ -2,17 +2,17 @@ from ..extensions import db
 from ..tables import *
 from flask import jsonify, request, Blueprint 
 import traceback
+from sqlalchemy import Column, String, text
+from sqlalchemy.sql import func, literal_column
 
 tooling_bp = Blueprint('tooling_bp', __name__)
-
-
 
 @tooling_bp.route("/getAllComponentsForAllDies", methods=["GET"])
 def get_all_components_for_all_dies():
     comps = Components.query.all()
     return jsonify([model_to_dict(c) for c in comps])
-# select * from dies where company;
 
+# select * from dies where company;
 @tooling_bp.route("/getAllDiesFromCompany", methods=['POST'])
 def get_AllDiesFromCompany():
     data = request.get_json()
@@ -121,4 +121,101 @@ def get_AllDies():
     die_query = db.session.scalars(statement).all() 
     dies_dict = [model_to_dict(Die) for Die in die_query]
     return jsonify(dies_dict)
+
+@tooling_bp.route("/getOperationsForDie", methods=['POST'])
+def get_OperationsLogForDie():
+    data = request.get_json()
+    tool_number = data.get('tool_number')
+    statement1 = db.select(OperationsLog).join(InsertComponent).where(InsertComponent.tool_number == tool_number)
+    statement1 = statement1.add_columns(literal_column("insert component").label("description"))
+    print(statement1)
+    sql_statement = text("""select operations_log.*,
+                            case
+                            when exists(
+                            select 1
+                            from operations_log
+                            left join insert_component
+                            on operations_log.operation_id = insert_component.operation_id
+                            ) then 'insert component'
+                            end as description
+                            from operations_log 
+                            inner join insert_component
+                            on operations_log.operation_id = insert_component.operation_id
+                            where insert_component.tool_number = :tool_number
+                            union all
+                            select operations_log.*,
+                            case
+                            when exists(
+                            select 1
+                            from operations_log
+                            left join insert_component_details
+                            on operations_log.operation_id = insert_component_details.operation_id
+                            ) then 'insert component details'
+                            end as description
+                            from operations_log
+                            inner join insert_component_details
+                            on operations_log.operation_id = insert_component_details.operation_id
+                            where insert_component_details.tool_number = :tool_number
+                            union all
+                            select operations_log.*,
+                            case
+                            when exists(
+                            select 1
+                            from operations_log
+                            left join update_component_current_height
+                            on operations_log.operation_id = update_component_current_height.operation_id
+                            ) then 'update component current height'
+                            end as description
+                            from operations_log
+                            inner join update_component_current_height
+                            on operations_log.operation_id = update_component_current_height.operation_id
+                            where update_component_current_height.tool_number = :tool_number
+                            union all
+                            select operations_log.*,
+                            case
+                            when exists(
+                            select 1
+                            from operations_log
+                            left join update_component_details
+                            on operations_log.operation_id = update_component_details.operation_id
+                            ) then 'update component details'
+                            end as description
+                            from operations_log
+                            inner join update_component_details
+                            on operations_log.operation_id = update_component_details.operation_id 
+                            where update_component_details.tool_number = :tool_number
+                            union all
+                            select operations_log.*,
+                            case
+                            when exists(
+                            select 1
+                            from operations_log
+                            left join update_component_revision
+                            on operations_log.operation_id = update_component_revision.operation_id
+                            ) then 'update component revision'
+                            end as description
+                            from operations_log
+                            inner join update_component_revision
+                            on operations_log.operation_id = update_component_revision.operation_id
+                            where update_component_revision.tool_number = :tool_number
+                            union all
+                            select operations_log.*,
+                            case
+                            when exists(
+                            select 1
+                            from operations_log
+                            left join update_component_state
+                            on operations_log.operation_id = update_component_state.operation_id
+                            ) then 'update component state'
+                            end as description
+                            from operations_log
+                            inner join update_component_state
+                            on operations_log.operation_id = update_component_state.operation_id 
+                            where update_component_state.tool_number = :tool_number;""")
+    
+    operations_log_query = db.session.execute(sql_statement, {"tool_number": tool_number}).all() 
+    operationsLogList = [dict(operations_log._mapping) for operations_log in operations_log_query]
+    return jsonify(operationsLogList)
+
+
 
