@@ -262,10 +262,10 @@ const sortedFilteredComponents = React.useMemo(() => {
   {/* this thing was hinted at in sophia's drawing, idk I like it */} 
   <span
     style={{
-      backgroundColor: dieInfo?.status === "serviced" ? "#d4edda" : "#f8d7da",
-      color: dieInfo?.status === "serviced" ? "#155724" : "#721c24",
+      backgroundColor: dieInfo?.status === "serviced" ? "#8ae39fff" : "#ff8892ff",
+      color: dieInfo?.status === "serviced" ? "#2d8341ff" : "#963a43ff",
       border: "1px solid",
-      borderColor: dieInfo?.status === "serviced" ? "#c3e6cb" : "#f5c6cb",
+      borderColor: dieInfo?.status === "serviced" ? "#196f2dff" : "#60151cff",
       borderRadius: "10px",
       padding: "0.35rem 0.9rem",
       fontWeight: "bold",
@@ -292,7 +292,7 @@ const sortedFilteredComponents = React.useMemo(() => {
       <div className="production-header">
       <h2>Production Control</h2>    
       <div className="production">
-        <button onClick={() => setShowModal(true)}>
+        <button className="prodBtn" onClick={() => setShowModal(true)}>
           {isProducing ? "End Production" : "Start Production"}
         </button>
       </div> 
@@ -332,8 +332,8 @@ const sortedFilteredComponents = React.useMemo(() => {
                 }}
               />
               <div className="modal-actions">
-                <button onClick={handleEndProduction}>Confirm</button>
                 <button className="cancel" onClick={() => setShowModal(false)}>Cancel</button>
+                <button onClick={handleEndProduction}>Confirm</button>
               </div>
             </div>
           </div>,
@@ -349,13 +349,13 @@ const sortedFilteredComponents = React.useMemo(() => {
         <div className="table-card-header">
           <h2>Components for {toolNumber}</h2>
           <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <select value={filterMode} onChange={(e) => setFilterMode(e.target.value)}>
+          <select className="filter" value={filterMode} onChange={(e) => setFilterMode(e.target.value)}>
             <option value="all">All States</option>
             <option value="active">Active</option>
             <option value="inventory">Inventory</option>
             <option value="inactive">Inactive</option>
           </select>
-          <select value={sortMode} onChange={(e) => setSortMode(e.target.value)}>
+          <select className="filter" value={sortMode} onChange={(e) => setSortMode(e.target.value)}>
             <option value="status">Sort: Active, Inventory, Inactive</option>
             <option value="hits_desc">Sort: Current Hits (High to Low)</option>
             <option value="height_asc">Sort: Current Height (Low to High)</option>

@@ -8,7 +8,13 @@ import Dies from './components/pages/Dies';
 import Admin from './components/pages/Admin';
 import Login from './components/pages/Login';
 
+import { keepTheme } from './components/layout/themes';
+import { useEffect } from 'react';
+
 function App() {
+  useEffect(() => {
+      keepTheme();
+  })
   return (
     <Router>
       <Routes>

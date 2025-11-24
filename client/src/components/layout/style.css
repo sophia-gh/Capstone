@@ -1,6 +1,21 @@
 :root {
   --color-bg: #f3f3f3;
   --color-card: #ffffff;
+  --color-sidebar-bg: oklch(97.989% 0.00104 11.274);
+  --shadow-color: rgba(0, 0, 0, 0.15);
+  --shadow-highlight: rgba(255, 255, 255, 0.8);
+  --shadow-sidebar: 6px 0 14px rgba(0, 0, 0, 0.08);
+  --color-text: #333;
+  --color-muted: #6b7280;  
+  --color-text-bold: #111827;  
+  --color-sidebar-text: #1f2937;  
+  --font-main: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", sans-serif;
+  --font-size-base: 16px;  
+}
+
+.theme-light {
+  --color-bg: #f3f3f3;
+  --color-card: #ffffff;
   --color-header-bg: #fdfdfd;
   --color-footer-bg: var(--color-header-bg);
 
@@ -10,7 +25,11 @@
   --color-sidebar-active: #fffffe;
 
   --shadow-color: rgba(0, 0, 0, 0.15);
+  --shadow-highlight: rgba(255, 255, 255, 0.8);
   --shadow-color2: rgba(163, 163, 163, 0.16);
+  --shadow-highlight2: rgba(255, 255, 255, 0.64);
+  --shadow-color3: rgba(0, 39, 80, 0.16);
+  --shadow-color4: rgba(0, 0, 0, 0.5);
   --shadow-sidebar: 6px 0 14px rgba(0, 0, 0, 0.08);
   --shadow-header: 0 4px 10px rgba(0, 0, 0, 0.08);
   --shadow-card: -10px -10px 14px rgba(255, 255, 255, 0.64),
@@ -23,10 +42,67 @@
   --font-main: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", sans-serif;
   --font-size-base: 16px;  
 
+  --border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   --color-border: #d1d5db;
   --border-radius: 10px;
   --padding-base: 0.5rem;
   --transition-fast: 0.2s ease-in-out;
+
+  --icon: #475569;
+  --icon-hover: #1e293b;
+
+  --button-bg: #b3b3b3;
+  --button-bg-hover: #8f8f8f;
+  --actions-hover: rgba(0,0,0,0.1);
+  --cancel-bg: #e5e7eb;
+  --component-health-bar: #ddd;
+  --prodBtn-bg: #d4d4d4;
+}
+
+.theme-dark {
+  --color-bg: #1e1e1e;
+  --color-card: #2b2b2b;
+  --color-header-bg: #2a2a2a;
+  --color-footer-bg: var(--color-header-bg);
+
+  --color-sidebar-bg: #252525;
+  --color-sidebar-border: #3a3a3a;
+  --color-sidebar-hover: #333333;
+  --color-sidebar-active: #3f3f3f;
+
+  --shadow-color: rgba(0, 0, 0, 0.6);
+  --shadow-highlight: rgba(255, 255, 255, 0.06);
+  --shadow-color2: rgba(0, 0, 0, 0.55);
+  --shadow-highlight2: rgba(255, 255, 255, 0.04);
+  --shadow-color3: rgba(0, 0, 0, 0.4);
+  --shadow-color4: rgba(0, 0, 0, 0.5);
+  --shadow-sidebar: 6px 0 14px rgba(0, 0, 0, 0.35);
+  --shadow-header: 0 4px 10px rgba(0, 0, 0, 0.30);
+  --shadow-card: -10px -10px 14px rgba(255, 255, 255, 0.04),
+                  10px 10px 14px rgba(0, 0, 0, 0.45);
+
+  --color-text: #e5e5e5;
+  --color-muted: #9ca3af;  
+  --color-text-bold: #f3f4f6;  
+  --color-sidebar-text: #f3f4f6;  
+  --font-main: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", sans-serif;
+  --font-size-base: 16px;  
+
+  --border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  --color-border: #3f3f3f;
+  --border-radius: 10px;
+  --padding-base: 0.5rem;
+  --transition-fast: 0.2s ease-in-out;
+
+  --icon: #cbd5e1;
+  --icon-hover: #f1f5f9;
+
+  --button-bg: #484848;
+  --button-bg-hover: #575757;
+  --actions-hover: rgba(165, 165, 165, 0.1);
+  --cancel-bg: #898989;
+  --component-health-bar: #656565;
+  --prodBtn-bg: #626262;
 }
 
 .main-container {
@@ -77,7 +153,7 @@
 .sidebar-link.active {
   background-color: var(--color-sidebar-active);
   box-shadow:
-    -4px -4px 5px rgba(255, 255, 255, 0.8),
+    -4px -4px 5px var(--shadow-highlight),
     4px 4px 5px var(--shadow-color2),
     inset -4px -4px 5px var(--color-card),
     inset 4px 4px 5px var(--shadow-color2);
@@ -131,11 +207,11 @@
   width: 24px;
   height: 24px;
   cursor: pointer;
-  color: #475569;
+  color: var(--icon);
 }
 
 .icon:hover {
-  color: #1e293b;
+  color: var(--icon-hover);
 }
 
 /* Page Content */
@@ -169,10 +245,10 @@
   flex-direction: column;
   align-items: center;
   height: 420px;
-  background-color: #fff;
+  background-color: var(--color-card);
   padding: 0 2rem;
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow-color);
 }
 
 form {
@@ -195,7 +271,7 @@ input {
 }
 
 .headerIconButton:hover {
-  color: #1e293b;
+  color: var(--icon-hover);
 }
 
 .user-container {
@@ -214,14 +290,14 @@ input {
   padding: 8px 12px;
   white-space: nowrap;
   border-radius: 6px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 10px var(--shadow-color);
   z-index: 10;
 }
 
 button {
   padding: 0.5rem;
   font-size: 1rem;
-  background-color: #b3b3b3;
+  background-color: var(--button-bg);
   color: var(--color-card);
   border: none;
   border-radius: var(--border-radius);
@@ -229,7 +305,7 @@ button {
 }
 
 button:hover {
-  background-color: rgb(143, 143, 143);
+  background-color: var(--button-bg-hover);
 }
 
 .error {
@@ -272,7 +348,7 @@ h5 {
 
 .card-header h3 {
   text-shadow: 
-    -1px -1px 2px rgba(255, 255, 255),
+    -1px -1px 2px var(--shadow-highlight),
     1px 1px 2px var(--shadow-color2);
   font-size: 1rem;
   font-weight: 500;
@@ -296,10 +372,10 @@ h5 {
 .card:hover {
   transform: translateY(-4px);
   box-shadow:
-    -10px -10px 14px rgba(255, 255, 255, 0.64),
-    30px 30px 44px rgba(0, 39, 80, 0.16),
-    inset -10px -10px 14px rgba(255, 255, 255, 0.64),
-    inset 10px 10px 14px rgba(0, 39, 80, 0.16);
+    -10px -10px 14px var(--shadow-highlight2),
+    30px 30px 44px var(--shadow-color3),
+    inset -10px -10px 14px var(--shadow-highlight2),
+    inset 10px 10px 14px var(--shadow-color3);
 }
 
 table{
@@ -326,7 +402,7 @@ th{
   color: var(--color-text-bold);
   padding: 0.6rem;
   font-size: 1rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: var(--border-bottom);
   white-space: nowrap;
 }
 
@@ -334,7 +410,7 @@ th{
   text-align: left;
   padding: 0.6rem;
   font-size: 0.9rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: var(--border-bottom);
   white-space: nowrap;
 }
 
@@ -380,6 +456,10 @@ option {
   color: var(--color-text);
 }
 
+.filter {
+  color: var(--color-text);
+}
+
 .die-header-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -407,7 +487,7 @@ option {
 }
 
 .cancel {
-  background-color: #e5e7eb;
+  background-color: var(--cancel-bg);
   margin: 0 0.5rem;
 }
 
@@ -433,7 +513,7 @@ option {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--shadow-color4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -472,7 +552,7 @@ option {
 }
 
 .actions-btn:hover {
-  background-color: rgba(0,0,0,0.1);
+  background-color: var(--actions-hover);
 }
 
 
@@ -494,7 +574,7 @@ option {
   margin-top: 0rem;
   height: 25px;
   width: 100%;
-  background: #ddd;
+  background: var(--component-health-bar);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -536,7 +616,7 @@ option {
 
 .add-button {
   background-color: #4caf50;
-  color: var(--color-card);
+  color: var(--prodBtn-color);
   padding: 0.5rem 1rem;
   border-radius: var(--border-radius);
   cursor: pointer;
@@ -557,6 +637,11 @@ option {
   justify-content: space-between;
   align-items: center;
   display: flex;
+}
+
+.prodBtn {
+  background-color: var(--prodBtn-bg);
+  color: var(--prodBtn-color);
 }
 
 .employee-tabs {

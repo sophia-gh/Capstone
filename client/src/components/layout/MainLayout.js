@@ -4,6 +4,7 @@ import { FiUser } from 'react-icons/fi';
 import { Outlet } from 'react-router-dom';
 import {LogoutButton} from './logoutButton.js';
 import './style.css';
+import Toggle from './Toggle.js';
 
 const MainLayout = () => {
     const [showModal, setShowModal] = useState(false);
@@ -21,7 +22,7 @@ const MainLayout = () => {
     return (
         <div className="main-container">
             <aside className="sidebar">
-                <h1 className="sidebar-title">Navigation</h1>
+                <h1 className="sidebar-title" style={{ display: "flex", gap: "1rem" }}>Navigation <Toggle> Light Mode? </Toggle></h1>
                 <nav>
                     {/* ARCHIVED!!! <NavLink to="/app/apiCallExample" className="sidebar-link">APICall</NavLink> */}
                     <NavLink to="/app/Dashboard" className="sidebar-link">Dashboard</NavLink>
