@@ -1,4 +1,8 @@
-from server import app
+import sys
+import flaskr
 
-if __name__ == '__main__':
-    app.run()
+app = flaskr.create_app()
+
+if __name__ == "__main__":
+    flaskr.create_app.run()
+

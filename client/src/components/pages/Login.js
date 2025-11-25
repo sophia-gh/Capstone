@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../layout/style.css';
+import { useAuth } from '../AuthContext';
 
 const Login = () => {
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const authenticate= useAuth();
 
     const handleSubmit = async (e) => { 
       e.preventDefault(); 
@@ -24,7 +26,10 @@ const Login = () => {
       const result = await response.json()
       if (result.user === true){
         setError('');
-        navigate('/app/Dashboard');
+        
+        authenticate.login();
+        authenticate.setJobTitle(result.job_title);
+        navigate('/dashboard');
       } else {
         setError('Invalid userID or password. Contact admin if you need access.');
       }

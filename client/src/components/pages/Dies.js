@@ -143,7 +143,7 @@ fetchDies();
       setLoadingComponents(true);
       setError(null);
       try {
-        const response = await fetch("/getComponentsForDie", {
+        const response = await fetch("/getComponentsJoinComponentDetails", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ tool_number: toolNumber }),
@@ -377,21 +377,19 @@ const sortedFilteredComponents = React.useMemo(() => {
           <table className="activity-table">
             <thead>
               <tr>
-                <th>Detail Number</th>
-                <th>Min Height</th>
-                <th>Nominal Height</th>
+                <th>Detail #</th>
+                <th>Build #</th>
+                <th>Component #</th>
                 <th>Low Quantity</th>
-                <th>Sharpen Frequency</th>
+                
                 <th>Description</th>
                 <th>Number Used</th>
                 <th>Cost</th>
-                <th>Current Revision</th>
-                <th>Build #</th>
-                <th>Component #</th>
-                <th>Detail #</th>
+                
                 <th>Revision</th>
-                <th>Current Height</th>
+                <th>Current Revision</th>
                 <th>Current Hits</th>
+                <th>Sharpen Frequency</th>
                 <th>Lifetime Hits</th>
                 <th>Current State</th>
                 <th>Component Height</th>
@@ -401,24 +399,23 @@ const sortedFilteredComponents = React.useMemo(() => {
             <tbody>
               {sortedFilteredComponents.map((comp, idx) => (
                 <tr key={`${comp.tool_number}-${idx}`}>
-                  <td>{detail?.detail_number}</td>
-                  <td>{detail?.min_height}</td>
-                  <td>{detail?.nominal_height}</td>
-                  <td>{detail?.low_quantity}</td>
-                  <td>{detail?.frequency_to_sharpen}</td>
-                  <td>{detail?.description || "N/A"}</td>
-                  <td>{detail?.number_used_in_tool}</td>
-                  <td>{detail?.cost}</td>
-                  <td>{detail?.current_revision}</td>
+                  <td>{comp.detail_number}</td>
                   <td>{comp.build_number}</td>
                   <td>{comp.component_number}</td>
-                  <td>{comp.detail_number}</td>
+                  
+                  <td>{comp.low_quantity}</td>
+                  
+                  <td>{comp.description || "N/A"}</td>
+                  <td>{comp.number_used_in_tool}</td>
+                  <td>{comp.cost}</td>
+                  
                   <td>{comp.revision ?? "-"}</td>
-                  <td>{comp.current_height ?? "-"}</td>
+                  <td>{comp.current_revision}</td>
                   <td>{comp.current_hits ?? 0}</td>
+                  <td>{comp.frequency_to_sharpen}</td>
                   <td>{comp.lifetime_hits ?? 0}</td>
                   <td>{comp.current_state}</td>
-                  <td><ComponentHealthBar component={comp}/></td>
+                  <td><ComponentHealthBar component={comp} detail={comp}/></td>
                   <td>
                     <button className="actions-btn" onClick={() => {
                         setActiveTab("component");
@@ -450,21 +447,19 @@ const sortedFilteredComponents = React.useMemo(() => {
           <table className="activity-table">
             <thead>
               <tr>
+                <th>Operation id</th>
                 <th>Date</th>
-                <th>Operation #</th>
                 <th>Description</th>
-                <th>Operator</th>
-                <th>Status</th>
+                <th>Employee id</th>
               </tr>
             </thead>
             <tbody>
               {operations.map((op, idx) => (
                 <tr key={`${op.id}-${idx}`}>
+                  <td>{op.operation_id}</td>
                   <td>{op.date}</td>
-                  <td>{op.operation_number}</td>
                   <td>{op.description}</td>
-                  <td>{op.operator}</td>
-                  <td>{op.status}</td>
+                  <td>{op.employee_id}</td>
                 </tr>
               ))}
             </tbody>

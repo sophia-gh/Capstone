@@ -1,17 +1,11 @@
 from __future__ import annotations
-from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, Bundle
+from sqlalchemy.orm import Mapped, mapped_column, relationship, Bundle
 from sqlalchemy import inspect, Date, BigInteger, Identity, ForeignKey, Integer, Sequence, func, case, and_
 from datetime import date
 import enum
 from typing import List
-
-
-class Base(DeclarativeBase):
-    pass
-
-db = SQLAlchemy(model_class=Base)
+from .extensions import db
 
 class CurrentState(str, enum.Enum):
     active = 'active'
@@ -73,7 +67,7 @@ class OperationsLog(db.Model):
     parent: Mapped[Employees] = relationship(back_populates='children')
     child: Mapped["InsertComponent"] = relationship(back_populates='parent')
     child2: Mapped["InsertComponentDetails"] = relationship(back_populates='parent')
-    child3: Mapped["UpdateComponentsDetails"] = relationship(back_populates='parent')
+    child3: Mapped["UpdateComponentDetails"] = relationship(back_populates='parent')
     child4: Mapped["UpdateComponentCurrentHeight"] = relationship(back_populates='parent')
     child5: Mapped["UpdateComponentRevision"] = relationship(back_populates='parent')
     child6: Mapped["UpdateComponentState"] = relationship(back_populates='parent')
@@ -119,7 +113,7 @@ class InsertComponentDetails(db.Model):
     build_number: Mapped[str] = mapped_column(primary_key=True)
     parent: Mapped[OperationsLog] = relationship(back_populates='child2')
 
-class UpdateComponentsDetails(db.Model):
+class UpdateComponentDetails(db.Model):
     __tablename__ = "update_component_details" 
     operation_id: Mapped[int] = mapped_column(ForeignKey('operations_log.operation_id'), primary_key=True)
     tool_number: Mapped[str] = mapped_column(primary_key=True)   
@@ -180,11 +174,3 @@ class UpdateComponentState(db.Model):
 def model_to_dict(obj): 
     return {c.key: getattr(obj, c.key) for c in db.inspect(obj).mapper.column_attrs}
 
-class DictBundle(Bundle):
-    def create_row_processor(self, query, procs, labels):
-        "Override create_row_processor to return values as dictionaries"
-
-        def proc(row):
-            return dict(zip(labels, (proc(row) for proc in procs)))
-
-        return proc
