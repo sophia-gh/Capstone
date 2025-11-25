@@ -1,15 +1,18 @@
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from tables import *
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime 
+import traceback
 
-app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('config.py')  
+app = Flask(__name__, static_folder='../client/build', static_url_path='/', instance_relative_config=True)
 app.config.from_pyfile('config.py')  
 
-db = SQLAlchemy(model_class=Base)
 db.init_app(app)
+
+@app.route("/")
+def react_build():
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route("/login", methods=['POST'])
 def login():
@@ -104,6 +107,11 @@ def get_AllDies():
     dies_dict = [model_to_dict(Die) for Die in die_query]
     return jsonify(dies_dict)
 
+@app.route("/getAllComponentsForAllDies", methods=["GET"])
+def get_all_components_for_all_dies():
+    comps = Components.query.all()
+    return jsonify([model_to_dict(c) for c in comps])
+
 @app.route('/getAllEmployees')
 def get_AllEmployees():
     statement = db.select(Employees)
@@ -167,19 +175,8 @@ def get_AllActiveComponentsForDie():
     status = data.get('status')
     statement = db.select(Components.status).where(Components.status == 'active').where(Components.tool_number == tool_number)
     component_details_query = db.session.scalars(statement).all() 
-    component_dict = [model_to_dict(Component) for Component in component_details_query]
+    component_details_dict = [model_to_dict(Component) for Component in component_details_query]
     return jsonify(component_details_dict)
-
-# select
-#         t1.detail_number, 
-#         t1.number_used_in_tool, 
-#         COUNT(case when t2.current_state = 'active'::status then 1 end) as active_components 
-# from 
-# 	component_details as t1 
-# left join 
-# 	components as t2 on t1.tool_number = t2.tool_number and t1.detail_number = t2.detail_number
-# where 
-# 	t1.tool_number = '607636044-5' group by t1.detail_number, t1.number_used_in_tool;
 
 @app.route('/startProductionRun', methods=['POST'])
 def start_production_run():
@@ -198,12 +195,14 @@ def start_production_run():
         func.count(case((Components.current_state == CurrentState.active, 1))).label('active_component_count')
         ).join(Components
         ).group_by(ComponentDetails.detail_number, ComponentDetails.number_used_in_tool
-        ).where(ComponentDetails.tool_number == tool_number and Component.tool_number == tool_number) 
+        ).where(ComponentDetails.tool_number == tool_number and Components.tool_number == tool_number) 
     componentDetailsQuery = db.session.execute(statement2).all()
     try:
         ActiveCountList = {} 
         if componentDetailsQuery:
             for detailNumber in componentDetailsQuery:
+                print(f"Checking detail {detailNumber}: used={detailNumber.number_used_in_tool}, active={detailNumber.active_component_count}")
+                
                 if detailNumber.number_used_in_tool != detailNumber.active_component_count:
                     ActiveCountList[detailNumber.detail_number] = detailNumber.active_component_count 
             if ActiveCountList:
@@ -228,7 +227,7 @@ def end_production_run():
             print('not in production')
             return jsonify('not in production')
     statement2 = db.update(Components
-    ).where(Components.tool_number == tool_number and Component.current_state == CurrentState.active
+    ).where(Components.tool_number == tool_number and Components.current_state == CurrentState.active
     ).values(current_hits = Components.current_hits + number_of_hits, lifetime_hits = Components.lifetime_hits + number_of_hits
     ).returning(Components.current_hits, Components.lifetime_hits)
     updateHitsQuery = db.session.execute(statement2).first()
@@ -289,6 +288,101 @@ def grind_Component():
     except:
         return jsonify({'message': 'Component not found'})
 
+@app.route('/addComponent', methods=['POST'])
+def add_component():
+    data = request.get_json()
+    tool_number = data.get('tool_number')
+    detail_number = data.get('detail_number')
+    component_number = data.get('component_number')
+    build_number = data.get('build_number')
+    try:
+        if not tool_number or not detail_number or not component_number:
+            return jsonify({'message': 'Missing required fields'})
+
+        statement = db.select(ComponentDetails).where(
+            ComponentDetails.tool_number == tool_number,
+            ComponentDetails.detail_number == detail_number
+        )
+        detail_obj = db.session.scalars(statement).first()
+        if not detail_obj:
+            return jsonify({'message': 'Detail number not found for this die'})
+        nominal_height = detail_obj.nominal_height
+        new_component = Components(
+            tool_number=tool_number,
+            detail_number=detail_number,
+            component_number=component_number,
+            build_number=build_number,
+            revision=1,
+            lifetime_hits=0,
+            current_hits=0,
+            current_height=nominal_height,
+            current_state=CurrentState.active
+        )
+        db.session.add(new_component)
+        db.session.commit()
+        return jsonify({'message': 'added component successfully'})
+    except:
+        traceback.print_exc()
+        return jsonify({'message': 'error adding component'})
+
+@app.route('/currentUser')
+def current_user():
+    if 'employee_id' in session:
+        return jsonify({
+            'employee_id': session['employee_id'],
+            'first_name': session['first_name'],
+            'last_name': session['last_name'],
+            'job_title': session['job_title']
+        })
+    return jsonify({'user': False})
+
+@app.route('/newPassword', methods=['POST'])
+def new_password():
+    data = request.get_json()
+    employee_id = data.get('employee_id')
+    new_password = data.get('new_password')
+    if not new_password:
+        return jsonify({'message': 'No password provided'})
+    try:   
+        hashed_password = generate_password_hash(new_password)  
+        statement = db.update(Employees
+            ).where(Employees.employee_id == employee_id
+            ).values(password=hashed_password
+            ).returning(Employees.employee_id) 
+        update_password = db.session.scalars(statement).first()
+
+        if update_password: 
+            db.session.commit()
+            return jsonify({'message': 'New password set successfully'})
+        return jsonify({'message': 'Employee not found'})
+    
+    except Exception as e:
+        print(traceback.format_exc(e))
+        return jsonify({'message': 'Error setting password'})
+
+@app.route('/editProfile', methods=['POST'])
+def edit_profile():
+    data = request.get_json()
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+    job_title = data.get('job_title')
+    employee_id = data.get('employee_id')
+    try:   
+        statement = db.update(Employees
+            ).where(Employees.employee_id == employee_id
+            ).values(first_name=first_name, last_name=last_name, job_title=job_title
+            ).returning(Employees.employee_id) 
+        update_profile = db.session.scalars(statement).first()
+
+        if update_profile: 
+            db.session.commit()
+            return jsonify({'message': 'Profile edited successfully'})
+        return jsonify({'message': 'Employee not found'})
+    
+    except Exception as e:
+        print(traceback.format_exc(e))
+        return jsonify({'message': 'Error editing profile'})
+    
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Button from '../layout/button.js';
+import Button from './button.js';
 import { useNavigate } from 'react-router-dom';
 
 function APICall() {
