@@ -4,6 +4,7 @@ import MainLayout from './components/layout/MainLayout';
 import Footer from './components/layout/Footer';
 import Dashboard from './components/pages/Dashboard';
 import Tooling from './components/pages/Tooling';
+//import Servicing from './components/pages/Servicing'; 
 import Dies from './components/pages/Dies';
 import Admin from './components/pages/Admin';
 import Login from './components/pages/Login';
