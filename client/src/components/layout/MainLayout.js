@@ -8,6 +8,7 @@ import Toggle from './Toggle.js';
 
 const MainLayout = () => {
     const [showModal, setShowModal] = useState(false);
+    const [themeLabel, setThemeLabel] = useState("dark");
     
     const [user, setUser] = useState(null);
     useEffect(() => {
@@ -22,13 +23,18 @@ const MainLayout = () => {
     return (
         <div className="main-container">
             <aside className="sidebar">
-                <h1 className="sidebar-title" style={{ display: "flex", gap: "1rem" }}>Navigation <Toggle> Light Mode? </Toggle></h1>
+                <h1 className="sidebar-title">Navigation</h1>
                 <nav>
                     {/* ARCHIVED!!! <NavLink to="/app/apiCallExample" className="sidebar-link">APICall</NavLink> */}
                     <NavLink to="/app/Dashboard" className="sidebar-link">Dashboard</NavLink>
                     <NavLink to="/app/Tooling" className="sidebar-link">Tooling</NavLink>
                     <NavLink to="/app/Admin" className="sidebar-link">Admin</NavLink>
                 </nav>
+                <div className="sidebar-spacer"></div>
+                <div className="toggle-footer">
+                    {themeLabel === "light" ? "Light Mode" : "Dark Mode"}                  
+                    <Toggle onModeChange={(mode) => setThemeLabel(mode)} />
+                </div>
             </aside>
 
             <div className="content-area">
