@@ -52,7 +52,7 @@ const sortedFilteredDies = [...filteredDies].sort((a, b) => {
         <div style= {{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1 className="main-header">Select Die </h1>
         <div style={{ display: "flex", gap: "1rem" }}>
-            <select value={companyFilter} onChange={(e) => setCompanyFilter(e.target.value)}>
+            <select className="filter" value={companyFilter} onChange={(e) => setCompanyFilter(e.target.value)}>
                 <option value="all">Companies</option>
                 <option value="Superb">Superb</option>
                 <option value="Eaton">Eaton</option>
@@ -61,13 +61,13 @@ const sortedFilteredDies = [...filteredDies].sort((a, b) => {
                 <option value="Thermodisc">Thermodisc</option>
                 <option value="Gentex">Gentex</option>
             </select>
-            <select value={filterMode} onChange={(e) => setFilterMode(e.target.value)}>
+            <select className="filter" value={filterMode} onChange={(e) => setFilterMode(e.target.value)}>
               <option value="all">Status</option>
               <option value="in_production">In Production</option>
               <option value="not_serviced">Not Serviced</option>
               <option value="serviced">Serviced</option>
             </select>
-            <select value={sortMode} onChange={(e) => setSortMode(e.target.value)}>
+            <select className="filter" value={sortMode} onChange={(e) => setSortMode(e.target.value)}>
               <option value="tool_number">Sort: Tool Number</option>
               <option value="company">Sort: Company</option>
               <option value="status">Sort: Status</option>

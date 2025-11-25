@@ -5,9 +5,12 @@ import { Outlet } from 'react-router-dom';
 import {LogoutButton} from './logoutButton.js';
 import './style.css';
 import { useAuth } from '../AuthContext';
+import Toggle from './Toggle.js';
 
 const MainLayout = () => {
     const [showModal, setShowModal] = useState(false);
+    const [themeLabel, setThemeLabel] = useState("dark");
+    
     const [user, setUser] = useState(null);
     const authenticate = useAuth();
    
@@ -30,6 +33,11 @@ const MainLayout = () => {
                     <NavLink to="/Tooling" className="sidebar-link">Tooling</NavLink>
                     {authenticate.jobTitle === 'admin' && <NavLink to="/Admin" className="sidebar-link">Admin</NavLink>} 
                 </nav>
+                <div className="sidebar-spacer"></div>
+                <div className="toggle-footer">
+                    {themeLabel === "light" ? "Light Mode" : "Dark Mode"}                  
+                    <Toggle onModeChange={(mode) => setThemeLabel(mode)} />
+                </div>
             </aside>
 
             <div className="content-area">
