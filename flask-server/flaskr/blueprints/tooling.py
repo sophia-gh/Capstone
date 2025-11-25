@@ -126,9 +126,6 @@ def get_AllDies():
 def get_OperationsLogForDie():
     data = request.get_json()
     tool_number = data.get('tool_number')
-    statement1 = db.select(OperationsLog).join(InsertComponent).where(InsertComponent.tool_number == tool_number)
-    statement1 = statement1.add_columns(literal_column("insert component").label("description"))
-    print(statement1)
     sql_statement = text("""select operations_log.*,
                             case
                             when exists(
@@ -217,5 +214,19 @@ def get_OperationsLogForDie():
     operationsLogList = [dict(operations_log._mapping) for operations_log in operations_log_query]
     return jsonify(operationsLogList)
 
-
+@tooling_bp.route("/getComponentsJoinComponentDetails", methods=['POST'])
+def get_ComponentsJoinComponentDetails():
+    data = request.get_json()
+    tool_number = data.get('tool_number')
+    sql_statement = text("""select t1.detail_number, t1.build_number, t1,component_number, 
+                            t1.revision, t1.lifetime_hits, t1.current_hits, t1.current_height,
+                            t1.current_state, t2.min_height, t2.nominal_height, t2.low_quantity, 
+                            t2.frequency_to_sharpen, t2.description, t2.number_used_in_tool, t2.cost, 
+                            t2.current_revision from components as t1 join component_details as t2 on 
+                            t1.detail_number = t2.detail_number where t1.tool_number = :tool_number;""")
+    
+    components_query = db.session.execute(sql_statement, {"tool_number": tool_number}).all() 
+    componentsList = [dict(component._mapping) for component in components_query]
+    print(componentsList)
+    return jsonify(componentsList)
 
