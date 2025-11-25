@@ -18,7 +18,12 @@
     pip install sqlalchemy
     pip install psycopg2
     ```
-5. **in your flask-server directory create a folder called instance and inside create a file called config.py and enter code below. Create a unique secret key and enter your postgres username/password/database name in sqlalchemy_database_uri**
+
+5. **install postgres and migrate schema.sql to your database**
+   
+    *for instructions installing postgres and migrating schema, head to https://www.postgresql.org/docs/
+
+6. **in your flask-server directory create a folder called instance and inside create a file called config.py and enter code below. Create a unique secret key and enter your postgres username/password/database name in sqlalchemy_database_uri**
     ```
     DEBUG = False
     TESTING = False
@@ -29,30 +34,26 @@
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ```
 
-6. **install postgres and migrate schema.sql to your database**
-   
-    *for instructions installing postgres and migrating schema, head to https://www.postgresql.org/docs/
-
-5. **in you terminal start local server**
+7. **in you terminal start local server**
     ````    
     flask --app server run --debug 
     ````
     *this will start the server on local host, debug is optional*
 
-7. **in a seperate terminal, navigate to the `client` directory**
+8. **in a seperate terminal, navigate to the `client` directory**
 
-8. **install dependencies**
+9. **install dependencies**
     ``` cmd
     npm install
     ```
-9. **run the npm start command to start the flask app on local host**
+10. **run the npm start command to start the flask app on local host**
     ``` cmd
     npm start
     ```
     *if successful it will open a browser to the local host url the app is running in*
     *alternatively, click the local host or network link*
 
-10. **the api example page should display the data stored in the server.py file, should look like this** 
+11. **the api example page should display the data stored in the server.py file, should look like this** 
     *on this page do `ctrl + shift + i` and click `console` to see console output for debugging*
 
 ## Clean Up After Running
