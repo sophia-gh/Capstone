@@ -25,9 +25,9 @@ const Dies = () => {
   const [showActionsModal, setShowActionsModal] = useState(false);
   const [activeTab, setActiveTab] = useState("component");
   // can i realistically add more?
-  const [detailNumber, setDetailNumber] = useState('');
-  const [buildNumber, setBuildNumber] = useState('');
-  const [componentNumber, setComponentNumber] = useState('');
+  // const [detailNumber, setDetailNumber] = useState('');
+  // const [buildNumber, setBuildNumber] = useState('');
+  // const [componentNumber, setComponentNumber] = useState('');
   const [materialRemoved, setMaterialRemoved] = useState('');
   // yes, yes I can
   const [newBuildNumber, setNewBuildNumber] = useState('');
@@ -57,12 +57,12 @@ fetchDies();
 
   const handleGrind = async (e) => { 
     e.preventDefault(); 
-
+    
     try {
       const response = await fetch("/grindComponent", {
         method: 'POST', 
         headers: {'Content-Type': 'application/json'}, 
-        body: JSON.stringify({tool_number: toolNumber, detail_number: selectedComponent.detailNumber, build_number: selectedComponent.buildNumber, component_number: selectedComponent.componentNumber, material_removed: materialRemoved})
+        body: JSON.stringify({tool_number: toolNumber, detail_number: selectedComponent.detail_number, build_number: selectedComponent.build_number, component_number: selectedComponent.component_number, material_removed: materialRemoved})
       })
     
       if (!response.ok) {
@@ -70,7 +70,7 @@ fetchDies();
       }
       const result = await response.json()
       console.log(result)     
-      alert("Component successfully ground!");
+      alert(result.message);
       setShowActionsModal(false);
       setMaterialRemoved("");
     }   
@@ -188,29 +188,29 @@ fetchDies();
   }, [toolNumber]);
 
   // Fetch component details
-  useEffect(() => {
-    const fetchDetail = async () => {
-      try {
-        const response = await fetch("/getAllComponentDetailsForDie", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ tool_number: toolNumber }),
-        });
-        if (!response.ok) throw new Error("Failed to fetch detail");
-        const result = await response.json();
-        const first = Array.isArray(result) && result.length > 0 ? result[0] : null;
-        setDetail(first);
-        console.log("Fetched detail result (raw array):", result);
-        console.log("Using detail object:", first);
+//   useEffect(() => {
+//     const fetchDetail = async () => {
+//       try {
+//         const response = await fetch("/getAllComponentDetailsForDie", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ tool_number: toolNumber }),
+//         });
+//         if (!response.ok) throw new Error("Failed to fetch detail");
+//         const result = await response.json();
+//         const first = Array.isArray(result) && result.length > 0 ? result[0] : null;
+//         setDetail(first);
+//         console.log("Fetched detail result (raw array):", result);
+//         console.log("Using detail object:", first);
 
-      } catch (err) {
-        console.error(err);
-        setDetail(null);
-      }
-    };
+//       } catch (err) {
+//         console.error(err);
+//         setDetail(null);
+//       }
+//     };
 
-    fetchDetail();
-}, [toolNumber]);
+//     fetchDetail();
+// }, [toolNumber]);
 
 const dieInfo = dies.find(d => d.tool_number === toolNumber);
 const componentsInfo = components.find(c => c.tool_number === toolNumber);
@@ -377,21 +377,16 @@ const sortedFilteredComponents = React.useMemo(() => {
           <table className="activity-table">
             <thead>
               <tr>
-                <th>Detail #</th>
-                <th>Build #</th>
-                <th>Component #</th>
-                <th>Low Quantity</th>
-                
+                <th>Component_id</th>
+                <th>Low Qty</th>
                 <th>Description</th>
-                <th>Number Used</th>
+                <th># Used</th>
                 <th>Cost</th>
-                
                 <th>Revision</th>
-                <th>Current Revision</th>
                 <th>Current Hits</th>
-                <th>Sharpen Frequency</th>
-                <th>Lifetime Hits</th>
-                <th>Current State</th>
+                <th>Sharpen Freq</th>
+                <th>Total Hits</th>
+                <th>Status</th>
                 <th>Component Height</th>
                 <th>Actions</th>
               </tr>
@@ -399,18 +394,12 @@ const sortedFilteredComponents = React.useMemo(() => {
             <tbody>
               {sortedFilteredComponents.map((comp, idx) => (
                 <tr key={`${comp.tool_number}-${idx}`}>
-                  <td>{comp.detail_number}</td>
-                  <td>{comp.build_number}</td>
-                  <td>{comp.component_number}</td>
-                  
+                  <td>{comp.detail_number + '-b' + comp.build_number + '-' + comp.component_number}</td>
                   <td>{comp.low_quantity}</td>
-                  
                   <td>{comp.description || "N/A"}</td>
                   <td>{comp.number_used_in_tool}</td>
                   <td>{comp.cost}</td>
-                  
                   <td>{comp.revision ?? "-"}</td>
-                  <td>{comp.current_revision}</td>
                   <td>{comp.current_hits ?? 0}</td>
                   <td>{comp.frequency_to_sharpen}</td>
                   <td>{comp.lifetime_hits ?? 0}</td>
@@ -421,9 +410,9 @@ const sortedFilteredComponents = React.useMemo(() => {
                         setActiveTab("component");
                         setShowActionsModal(true);
                         setSelectedComponent(comp);
-                        setDetailNumber(comp.detail_number);
-                        setBuildNumber(comp.build_number);
-                        setComponentNumber(comp.component_number);
+                        // setDetailNumber(comp.detail_number);
+                        // setBuildNumber(comp.build_number);
+                        // setComponentNumber(comp.component_number);
                       }}>
                       ⋮
                     </button>
@@ -556,9 +545,10 @@ const sortedFilteredComponents = React.useMemo(() => {
           <div className="employee-tab-content" style={{ marginTop: "1rem" }}>
             {activeTab === "component" && (
               <div>
+                <p><strong>Detail Number:</strong> {selectedComponent.detail_number}</p>
                 <p><strong>Build Number:</strong> {selectedComponent.build_number}</p>
                 <p><strong>Component Number:</strong> {selectedComponent.component_number}</p>
-                <p><strong>Detail Number:</strong> {selectedComponent.detail_number}</p>
+                
                 <p><strong>Revision:</strong> {selectedComponent.revision ?? "-"}</p>
               </div>
             )}

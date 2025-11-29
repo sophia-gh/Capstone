@@ -91,7 +91,7 @@ def grind_Component():
     component_update_current_height = db.session.execute(statement).first()
     print(component_update_current_height)
     if component_update_current_height.current_state == CurrentState.active:
-        return jsonify('component is currently active')
+        return jsonify({'message': 'component is currently active'})
     try:
         if component_update_current_height: 
             statement2 = db.insert(OperationsLog).values(
@@ -112,7 +112,7 @@ def grind_Component():
                 update_update_current_height = db.session.execute(statement3)
                 if (update_update_current_height):
                     db.session.commit()
-                    return jsonify({'message': f'removed {material_removed} successfully'})
+                    return jsonify({'message': f'removed {material_removed} from component'})
     except:
         return jsonify({'message': 'Component not found'})
 

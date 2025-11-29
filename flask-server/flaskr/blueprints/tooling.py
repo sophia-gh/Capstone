@@ -104,8 +104,8 @@ def add_component():
             revision=1,
             lifetime_hits=0,
             current_hits=0,
-            current_height=nominal_height,
-            current_state=CurrentState.active
+            # current_height=nominal_height,
+            # current_state=CurrentState.active
         )
         db.session.add(new_component)
         db.session.commit()
@@ -227,6 +227,5 @@ def get_ComponentsJoinComponentDetails():
     
     components_query = db.session.execute(sql_statement, {"tool_number": tool_number}).all() 
     componentsList = [dict(component._mapping) for component in components_query]
-    print(componentsList)
     return jsonify(componentsList)
 
