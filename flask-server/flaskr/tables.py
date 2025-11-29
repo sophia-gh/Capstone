@@ -166,8 +166,8 @@ class UpdateComponentState(db.Model):
     detail_number: Mapped[str] = mapped_column(primary_key=True)
     build_number: Mapped[str] = mapped_column(primary_key=True)
     component_number: Mapped[int] = mapped_column(primary_key=True)
-    old_state: Mapped[int]
-    new_state: Mapped[int]
+    old_state: Mapped[CurrentState]
+    new_state: Mapped[CurrentState]
     description: Mapped[str]
     parent: Mapped[OperationsLog] = relationship(back_populates='child6')
 
