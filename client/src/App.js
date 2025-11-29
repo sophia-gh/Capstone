@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Navigate, BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // import APICall from './components/pages/archivedPages/apiExample';
 import MainLayout from './components/layout/MainLayout';
 import Footer from './components/layout/Footer';
@@ -22,6 +22,7 @@ function App() {
     <AuthProvider>
     <Router>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />}/>
           <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
             <Route path ="/Dashboard" element = {<Dashboard />} />
@@ -30,7 +31,7 @@ function App() {
             <Route path ="/Admin" element = {<Admin />} />
           </Route>
           </Routes>
-      <Footer/>
+        <Footer/>
     </Router>
     </AuthProvider>
   );
