@@ -31,6 +31,7 @@ const Dies = () => {
   const [materialRemoved, setMaterialRemoved] = useState('');
   // yes, yes I can
   const [newBuildNumber, setNewBuildNumber] = useState('');
+  const [newState, setNewState] = useState('');
 
   // this is the dies fetch used in tooling, it's needed here to get die status for the header, lightweight enough that it doesn't matter
   useEffect(() =>  {  
@@ -73,10 +74,45 @@ fetchDies();
       alert(result.message);
       setShowActionsModal(false);
       setMaterialRemoved("");
+      fetchComponents();
+      fetchOperations();
     }   
     catch (error) {
       console.error(error.message);
       alert("Error grinding component.");
+    }   
+  }
+
+  const handleUpdateState = async (e) => { 
+    e.preventDefault(); 
+    try {
+      const response = await fetch("/updateComponentState", {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify({tool_number: toolNumber, detail_number: detailNumber, build_number: buildNumber, component_number: componentNumber, new_state: newState})
+      })
+    
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const result = await response.json()
+      console.log(result)     
+      if (result.message === "error updating component state") {
+        alert("error updating component state");
+      } else if (result.message === "Error logging operation") {
+        alert("error logging")
+      } else {
+        alert("State updated!") 
+      }
+
+      setShowActionsModal(false);
+      setNewState("");
+      fetchComponents();
+      fetchOperations();
+    }   
+    catch (error) {
+      console.error("Network or JSON error:", error);
+      alert("Network/Server error. Check console.");
     }   
   }
 
@@ -129,16 +165,16 @@ fetchDies();
       } else {
         alert("Failed to end production: " + JSON.stringify(result));
       }
+      setShowModal(false);
+      fetchComponents();
+      fetchOperations();
     } catch (err) {
       console.error(err);
       alert("Error ending production.");
-    } finally {
-      setShowModal(false);
-    }
+    } 
   };
 
   // Fetch components
-  useEffect(() => {
     const fetchComponents = async () => {
       setLoadingComponents(true);
       setError(null);
@@ -157,13 +193,11 @@ fetchDies();
       } finally {
         setLoadingComponents(false);
       }
-    };
-
-    fetchComponents();
-  }, [toolNumber]);
+    }
+    useEffect(() => {fetchComponents();}, [toolNumber]);
 
   // Fetch operations
-  useEffect(() => {
+
     const fetchOperations = async () => {
       setLoadingOperations(true);
       setError(null);
@@ -182,10 +216,8 @@ fetchDies();
       } finally {
         setLoadingOperations(false);
       }
-    };
-
-    fetchOperations();
-  }, [toolNumber]);
+    } 
+    useEffect(() => { fetchOperations();}, [toolNumber]);
 
   // Fetch component details
 //   useEffect(() => {
@@ -235,6 +267,8 @@ const handleAddComponent = async () => {
     } else {
       alert("Error: " + JSON.stringify(result));
     }
+    fetchComponents();
+    fetchOperations();
   } catch (err) {
     console.error(err);
   }
@@ -244,7 +278,7 @@ const sortedFilteredComponents = React.useMemo(() => {
   let filtered = [...components];
   if (filterMode !== "all") {filtered = filtered.filter(c => c.current_state === filterMode)};
   if (sortMode === "status") {
-    const order = { active: 1, inventory: 2, inactive: 3 };
+    const order = { active: 1, inventory: 2, trash: 3, missing: 4};
     filtered.sort((a, b) => order[a.current_state] - order[b.current_state]);
   }
   if (sortMode === "hits_desc") {filtered.sort((a, b) => (b.current_hits ?? 0) - (a.current_hits ?? 0))};
@@ -353,10 +387,11 @@ const sortedFilteredComponents = React.useMemo(() => {
             <option value="all">All States</option>
             <option value="active">Active</option>
             <option value="inventory">Inventory</option>
-            <option value="inactive">Inactive</option>
+            <option value="trash">Trash</option>
+            <option value="missing">Missing</option>
           </select>
           <select className="filter" value={sortMode} onChange={(e) => setSortMode(e.target.value)}>
-            <option value="status">Sort: Active, Inventory, Inactive</option>
+            <option value="status">Sort: Active, Inventory, Trash, Missing</option>
             <option value="hits_desc">Sort: Current Hits (High to Low)</option>
             <option value="height_asc">Sort: Current Height (Low to High)</option>
           </select>
@@ -576,8 +611,21 @@ const sortedFilteredComponents = React.useMemo(() => {
 
             {activeTab === "update" && (
               <div>
-                <h3>Update Component</h3>
-                <p>Nothing here yet</p>
+                <h3>Update Component State</h3>
+                <form onSubmit={handleUpdateState}>
+                <select className="filter"
+                value={newState}
+                onChange={(e) => setNewState(e.target.value)}
+                required
+                >
+                  <option value="">Select new state</option>
+                  <option value="active">Active</option>
+                  <option value="inventory">Inventory</option>
+                  <option value="trash">Trash</option>
+                  <option value="missing">Missing</option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
               </div>
             )}
 

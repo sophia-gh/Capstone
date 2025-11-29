@@ -154,6 +154,64 @@ def grind_Component():
     except:
         return jsonify({'message': 'Component not found'})
 
+@actions_bp.route('/updateComponentState', methods=['POST'])
+def update_component_state():
+    data = request.get_json()
+    tool_number = data.get('tool_number')
+    detail_number = data.get('detail_number')
+    build_number = data.get('build_number')
+    component_number = data.get('component_number')
+    new_state = data.get('new_state')
+    statement = db.select(Components).where(
+        Components.tool_number == tool_number,
+        Components.detail_number == detail_number,
+        Components.build_number == build_number,
+        Components.component_number == component_number
+    )
+    current_component = db.session.scalars(statement).first()
+    if not current_component:
+        return jsonify({'message': 'Component not found'})
+    old_state = current_component.current_state
+    state_enum = CurrentState[new_state]
+    try:
+        statement1 = (
+            db.update(Components
+            ).where(Components.tool_number == tool_number
+            ).where(Components.detail_number == detail_number
+            ).where(Components.build_number == build_number
+            ).where(Components.component_number == component_number
+            ).values(current_state=state_enum
+            ).returning(Components.component_number)
+        )
+        result = db.session.execute(statement1).first()
+        if not result:
+            return jsonify({'message': 'Component unchanged'})
+        statement2 = db.insert(OperationsLog).values(
+            employee_id=session.get('employee_id'),
+            date=datetime.datetime.now()
+        ).returning(OperationsLog.operation_id) 
+        update_operations_log = db.session.execute(statement2).first()  
+        if not update_operations_log:
+            return jsonify({'message': 'Error logging operation'})
+        description_text = f"Changed from {old_state} to {state_enum.name}"
+        statement3 = db.insert(UpdateComponentState).values(
+            operation_id=update_operations_log.operation_id,
+            tool_number=tool_number,
+            detail_number=detail_number,
+            build_number=build_number,
+            component_number=component_number,
+            old_state=old_state, 
+            new_state=state_enum,
+            description=description_text
+        )
+        update_current_state = db.session.execute(statement3)
+        if (update_current_state):
+            db.session.commit()
+            return jsonify({"message": "state updated", "new_state": new_state})
+
+    except Exception as e:
+        traceback.print_exc(e)
+        return jsonify({'message': 'error updating component state'})
 
     
 
