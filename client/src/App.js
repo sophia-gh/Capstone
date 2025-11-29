@@ -23,7 +23,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />}/>
-          <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+          <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
             <Route path ="/Dashboard" element = {<Dashboard />} />
             <Route path ="/Tooling" element = {<Tooling />} />
             <Route path ="/Dies/:toolNumber" element = {<Dies />} />
