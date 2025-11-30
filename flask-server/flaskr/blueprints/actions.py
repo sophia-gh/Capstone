@@ -73,6 +73,44 @@ def end_production_run():
     except:
         return jsonify('error stopping production run')
 
+@actions_bp.route("/serviceDie", methods=['POST'])
+def service_die():
+    data  = request.get_json()
+    tool_number = data.get('tool_number')
+    statement = db.select(Dies).where(Dies.tool_number == tool_number)
+    dieQuery = db.session.scalars(statement).first()
+
+    if dieQuery:
+        if dieQuery.status == DieStatus.in_production: 
+            return jsonify({'message' : 'already in production'})
+
+    statement2 = db.select(
+        ComponentDetails.detail_number, 
+        ComponentDetails.number_used_in_tool, 
+        func.count(case((Components.current_state == CurrentState.active, 1))).label('active_component_count')
+        ).join(Components
+        ).group_by(ComponentDetails.detail_number, ComponentDetails.number_used_in_tool
+        ).where(ComponentDetails.tool_number == tool_number and Components.tool_number == tool_number) 
+    componentDetailsQuery = db.session.execute(statement2).all()
+    try:
+        ActiveCountList = {} 
+        if componentDetailsQuery:
+            for detailNumber in componentDetailsQuery:
+                print(f"Checking detail {detailNumber}: used={detailNumber.number_used_in_tool}, active={detailNumber.active_component_count}")
+                
+                if detailNumber.number_used_in_tool != detailNumber.active_component_count:
+                    ActiveCountList[detailNumber.detail_number] = detailNumber.active_component_count 
+            if ActiveCountList:
+                return jsonify({'message' : 'current number of active components does not meet required number for production'})
+
+            statement3 = db.update(Dies).where(Dies.tool_number == tool_number).values(status = DieStatus.serviced).returning(Dies.tool_number, Dies.status)
+            updateDieStateQuery = db.session.execute(statement3).all()
+            if updateDieStateQuery:
+                db.session.commit()
+                return jsonify({'message' : 'successfully serviced die'}) 
+    except:
+        return jsonify({'message' : 'error run'})    
+
 @actions_bp.route('/grindComponent', methods=['POST'])
 def grind_Component():
     data = request.get_json()

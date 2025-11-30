@@ -229,40 +229,6 @@ def get_ComponentsJoinComponentDetails():
     componentsList = [dict(component._mapping) for component in components_query]
     return jsonify(componentsList)
 
-@tooling_bp.route("/ServiceDie", methods=['POST'])
-def update_DieState():
-    data = request.get_json()
-    tool_number = data.get('tool_number')
-    try:
-        statement1 = db.select(Dies).where(Dies.tool_number == tool_number)
-        if statement1.status = DieStatus.in_production:
-            return jsonify({'message' : 'cannot update die state while in production'}) 
-        statement = db.update(Dies).where(Dies.tool_number == tool_number).values(status=DieStatus.serviced).returning(Dies.tool_number, Dies.status)
-        updateDieStateQuery = db.session.execute(statement).first()
-        if updateDieStateQuery:
-
-    try:
-        if updateDieStateQuery: 
-            statement2 = db.insert(OperationsLog).values(
-                employee_id=session.get('employee_id'),
-                date=datetime.datetime.now()
-            ).returning(OperationsLog.operation_id) 
-            update_operations_log = db.session.execute(statement2).first()  
-            if (update_operations_log): 
-                statement3 = db.insert(UpdateDieState).values(
-                    operation_id=update_operations_log.operation_id,
-                    tool_number=tool_number,
-                ) 
-                update_die_state = db.session.execute(statement3)
-                db.session.commit()
-                return jsonify({'message' : 'die state updated successfully'})
-                    
-    except:
-        return jsonify({'message': 'Component not found'})
-    except:
-        traceback.print_exc()
-        return jsonify({'message' : 'error updating die state'})
-
 @tooling_bp.route("/removeComponent", methods=['POST'])
 def remove_Component():
     data = request.get_json()
