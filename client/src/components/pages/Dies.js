@@ -15,6 +15,7 @@ const Dies = () => {
   const [error, setError] = useState(null);
   const [detail, setDetail] = useState(null);
   const [isProducing, setIsProducing] = useState(false);
+  const [isServiced, setIsServiced] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [hits, setHits] = useState("");
   const [showAddComponentModal, setShowAddComponentModal] = useState(false);
@@ -89,7 +90,7 @@ fetchDies();
       const response = await fetch("/updateComponentState", {
         method: 'POST', 
         headers: {'Content-Type': 'application/json'}, 
-        body: JSON.stringify({tool_number: toolNumber, detail_number: detailNumber, build_number: buildNumber, component_number: componentNumber, new_state: newState})
+        body: JSON.stringify({tool_number: toolNumber, detail_number: selectedComponent.detail_number, build_number: selectedComponent.build_number, component_number: selectedComponent.component_number, new_state: newState})
       })
     
       if (!response.ok) {
@@ -174,6 +175,32 @@ fetchDies();
     } 
   };
 
+  const handleServiceDie = async () => {
+    try {
+      const response = await fetch("/serviceDie", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tool_number: toolNumber }),
+      });
+      const result = await response.json();
+      console.log("Service die result:", result);
+      // debug lines
+      if (result.message === "successfully serviced die") {
+        alert("Die serviced successfully!");
+      } else if (result.message === "die in production") {
+        alert("This die is in production.");
+      } else if (result.message === "current number of active components does not meet required number for production") {
+        alert("Current number of active components does not meet required number for production");
+      } else {
+        alert("Failed to service die:" + JSON.stringify(result));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error servicing die.");
+    } finally {
+      setShowModal(false);
+    }
+  };
   // Fetch components
     const fetchComponents = async () => {
       setLoadingComponents(true);
@@ -257,7 +284,6 @@ const handleAddComponent = async () => {
         tool_number: toolNumber,
         detail_number: newDetailNumber,
         component_number: newComponentNumber,
-        build_number: newBuildNumber,
       }),
     });
     const result = await response.json();
@@ -326,12 +352,28 @@ const sortedFilteredComponents = React.useMemo(() => {
       <div className="production-header">
       <h2>Production Control</h2>    
       <div className="production">
+        <button className="serviceBtn" onClick={() => setShowModal(true)}>
+          {"Service Die"}
+        </button>
         <button className="prodBtn" onClick={() => setShowModal(true)}>
           {isProducing ? "End Production" : "Start Production"}
         </button>
       </div> 
       </div>
 
+      {/* Service Die Confirmation modal */}
+      {showModal && !isProducing && !isServiced && (
+        <div>
+          <div>
+            <h3>Confirm Service</h3>
+            <p>Service die <strong>{toolNumber}</strong>?</p>
+            <div className="production">
+              <button className="cancel" onClick={() => setShowModal(false)}>Cancel</button>
+              <button onClick={handleServiceDie}>Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Start Confirmation 'modal', I was lazy with this one at first bc i didn't want to fix the rendering issue, however the divs can just share the html vars now if we want */}
       {showModal && !isProducing && (
         <div>
