@@ -55,20 +55,35 @@ def lockUnlock_Employee():
 def change_JobTitle():
     data = request.get_json()
     employee_id = data.get('employee_id')
-
-    new_job_title = data.get('new_job_title')
+    employee_first_name = data.get('first_name')
+    employee_last_name = data.get('last_name')
+    new_job_title = data.get('job_title')
     statement = db.select(Employees).where(Employees.employee_id == employee_id)
     user_query = db.session.scalars(statement).first() 
-    print(user_query.employee_id, session.get('employee_id'))
+    match new_job_title:
+        case 'admin':
+            new_job_title = JobTitle.admin
+        case 'tool_manager':
+            new_job_title = JobTitle.tool_manager
+        case 'press_tech':
+            new_job_title = JobTitle.press_tech
+        case 'engineer':
+            new_job_title = JobTitle.engineer
+        case 'tool_maker':
+            new_job_title = JobTitle.tool_maker
+        case _:
+            return jsonify({'message': 'Invalid job title'})
     try:
         if user_query:
             if user_query.employee_id != session.get('employee_id'):
-                print('here')
-                user_query.job_title = new_job_title
+                statement2 = db.update(Employees).where(Employees.employee_id == employee_id
+                ).values(first_name=employee_first_name, last_name=employee_last_name, job_title=new_job_title
+                ).returning(Employees.first_name, Employees.last_name, Employees.job_title)
+                updateEmployee = db.session.execute(statement2).first()
                 db.session.commit()
-                return jsonify({'message': 'Job title changed successfully'})
+                return jsonify({'message': 'Employee profile edited successfully'})
             else:
-                return jsonify({'message': 'Cannot change your own job title'})
+                return jsonify({'message': 'Cannot edit your own profile'})
     except:
         return jsonify({'message': 'Employee not found'})
 
@@ -78,3 +93,22 @@ def get_AllEmployees():
     employees_query = db.session.scalars(statement).all() 
     employees_dict = [model_to_dict(employee) for employee in employees_query]
     return jsonify(employees_dict)
+
+@admin_bp.route('/updatePassword', methods=['POST'])
+def update_Password():
+    data = request.get_json()
+    employee_id = data.get('employee_id')
+    new_password = data.get('new_password')
+    hashed_password = generate_password_hash(new_password)  
+    statement = db.select(Employees).where(Employees.employee_id == employee_id)
+    user_query = db.session.scalars(statement).first() 
+    try:
+        if user_query:
+            statement2 = db.update(Employees).where(Employees.employee_id == employee_id
+            ).values(password=hashed_password
+            ).returning(Employees.employee_id)
+            db.session.execute(statement2)
+            db.session.commit()
+        return jsonify({'message': 'Password updated successfully'})
+    except:
+        return jsonify({'message': 'Employee not found'})

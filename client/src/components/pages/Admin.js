@@ -165,8 +165,10 @@ const handleNewPassword = async (e) => {
       setNewFirstName('');
       setNewLastName('');
       setNewJobTitle('');
-      if(result.message === 'Profile edited successfully') {
+      if(result.message === 'Employee profile edited successfully') {
         alert("Profile edited!");
+      } else if (result.message === 'Cannot edit your own profile'){
+        alert("Cannot edit your own profile");
       } else {
         alert("Error editing profile.");
       }
