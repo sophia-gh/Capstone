@@ -112,3 +112,50 @@ def update_Password():
         return jsonify({'message': 'Password updated successfully'})
     except:
         return jsonify({'message': 'Employee not found'})
+
+@admin_bp.route('/newPassword', methods=['POST'])
+def new_password():
+    data = request.get_json()
+    employee_id = data.get('employee_id')
+    new_password = data.get('new_password')
+    if not new_password:
+        return jsonify({'message': 'No password provided'})
+    try:   
+        hashed_password = generate_password_hash(new_password)  
+        statement = db.update(Employees
+            ).where(Employees.employee_id == employee_id
+            ).values(password=hashed_password
+            ).returning(Employees.employee_id) 
+        update_password = db.session.scalars(statement).first()
+
+        if update_password: 
+            db.session.commit()
+            return jsonify({'message': 'New password set successfully'})
+        return jsonify({'message': 'Employee not found'})
+    
+    except Exception as e:
+        print(traceback.format_exc(e))
+        return jsonify({'message': 'Error setting password'})
+
+# @app.route('/editProfile', methods=['POST'])
+# def edit_profile():
+#     data = request.get_json()
+#     first_name = data.get('first_name')
+#     last_name = data.get('last_name')
+#     job_title = data.get('job_title')
+#     employee_id = data.get('employee_id')
+#     try:   
+#         statement = db.update(Employees
+#             ).where(Employees.employee_id == employee_id
+#             ).values(first_name=first_name, last_name=last_name, job_title=job_title
+#             ).returning(Employees.employee_id) 
+#         update_profile = db.session.scalars(statement).first()
+
+#         if update_profile: 
+#             db.session.commit()
+#             return jsonify({'message': 'Profile edited successfully'})
+#         return jsonify({'message': 'Employee not found'})
+    
+#     except Exception as e:
+#         print(traceback.format_exc(e))
+#         return jsonify({'message': 'Error editing profile'})
