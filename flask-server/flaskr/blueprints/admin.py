@@ -2,6 +2,7 @@ from ..extensions import db
 from ..tables import *
 from flask import jsonify, request, Blueprint, session 
 from werkzeug.security import generate_password_hash, check_password_hash
+import traceback
 
 admin_bp = Blueprint('admin_bp', __name__)
 
