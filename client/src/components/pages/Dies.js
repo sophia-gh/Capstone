@@ -25,6 +25,7 @@ const Dies = () => {
   const [filterMode, setFilterMode] = useState("all");
   const [showActionsModal, setShowActionsModal] = useState(false);
   const [activeTab, setActiveTab] = useState("component");
+  const [dieState, setDieState] = useState(null);
   // can i realistically add more?
   // const [detailNumber, setDetailNumber] = useState('');
   // const [buildNumber, setBuildNumber] = useState('');
@@ -135,6 +136,7 @@ fetchDies();
       if (result.message === "successfully started production run") {
         alert("Production started successfully!");
         setIsProducing(true);
+        fetchDieStatus();
       } else if (result.message === "already in production") {
         alert("This die is already in production.");
         setIsProducing(true);
@@ -167,6 +169,7 @@ fetchDies();
         alert("Production ended successfully!");
         setIsProducing(false);
         setHits("");
+        fetchDieStatus();
       } else {
         alert("Failed to end production: " + JSON.stringify(result));
       }
@@ -191,6 +194,7 @@ fetchDies();
       // debug lines
       if (result.message === "successfully serviced die") {
         alert("Die serviced successfully!");
+        fetchDieStatus();
       } else if (result.message === "die in production") {
         alert("This die is in production.");
       } else if (result.message === "current number of active components does not meet required number for production") {
@@ -280,6 +284,32 @@ fetchDies();
     } 
     useEffect(() => { fetchOperations();}, [toolNumber]);
 
+ const fetchDieStatus = async () => {
+    try {
+      const response = await fetch("/getDieState", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tool_number: toolNumber }),
+      });
+      if (!response.ok) throw new Error("Failed to fetch die status");
+      const result = await response.json();
+      console.log(result)
+      if (result.message === "die not found") {
+        setDieState(null);
+        return;
+      }
+      if (result.message === "error retrieving die state") {
+        setDieState(null);
+        return;
+      } else {
+        setDieState(result.message);
+        }
+    }
+    finally {
+      console.log(dieState);
+    }
+  };
+  useEffect(() => {fetchDieStatus();}, [toolNumber]);
   // Fetch component details
 //   useEffect(() => {
 //     const fetchDetail = async () => {
@@ -308,6 +338,7 @@ fetchDies();
 const dieInfo = dies.find(d => d.tool_number === toolNumber);
 const componentsInfo = components.find(c => c.tool_number === toolNumber);
 const [selectedComponent, setSelectedComponent] = useState(null);
+
 
 const handleAddComponent = async () => {
   try {
@@ -356,10 +387,10 @@ const sortedFilteredComponents = React.useMemo(() => {
   {/* this thing was hinted at in sophia's drawing, idk I like it */} 
   <span
     style={{
-      backgroundColor: dieInfo?.status === "serviced" ? "#8ae39fff" : "#ff8892ff",
-      color: dieInfo?.status === "serviced" ? "#2d8341ff" : "#963a43ff",
+      backgroundColor: dieState === "serviced" ? "#8ae39fff" : "#ff8892ff",
+      color: dieState === "serviced" ? "#2d8341ff" : "#963a43ff",
       border: "1px solid",
-      borderColor: dieInfo?.status === "serviced" ? "#196f2dff" : "#60151cff",
+      borderColor: dieState === "serviced" ? "#196f2dff" : "#60151cff",
       borderRadius: "10px",
       padding: "0.35rem 0.9rem",
       fontWeight: "bold",
@@ -367,9 +398,9 @@ const sortedFilteredComponents = React.useMemo(() => {
       whiteSpace: "nowrap"
     }}
   >
-    {dieInfo?.status === "serviced"
+    {dieState === "serviced"
       ? "Serviced"
-      : dieInfo?.status === "in_production"
+      : dieState === "in_production"
       ? "In Production"
       : "Not Serviced"}
   </span>

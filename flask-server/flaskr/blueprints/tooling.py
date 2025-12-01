@@ -255,3 +255,19 @@ def remove_Component():
     except:
         traceback.print_exc()
         return jsonify({'message': 'error removing component'})
+
+@tooling_bp.route("/getDieState", methods=['POST'])
+def get_DieState():
+    data = request.get_json()
+    tool_number = data.get('tool_number')
+    try:
+        statement = db.select(Dies.status).where(Dies.tool_number == tool_number)
+        die_state_query = db.session.scalars(statement).first()
+        if die_state_query:
+            print(die_state_query)
+            return jsonify({'message': die_state_query})
+        else:
+            return jsonify({'message': 'die not found'})
+    except:
+        traceback.print_exc()
+        return jsonify({'message': 'error retrieving die state'})
