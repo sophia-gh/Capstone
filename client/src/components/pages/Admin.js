@@ -90,6 +90,9 @@ const Admin = () => {
       } else if (result.message === true) {
         setError2('Employee Enabled')
         alert("Employee Enabled");
+      } else if (result.message === 'Cannot lock/unlock your own account') {
+        setError2('Cannot lock/unlock your own account')
+        alert("Cannot lock/unlock your own account");
       } else {
         setError2('Employee not found')
         alert("Employee not found");
@@ -147,7 +150,7 @@ const handleNewPassword = async (e) => {
   const handleEditProfile = async (e) => { 
       e.preventDefault(); 
     try {
-      const response = await fetch("/editProfile", {
+      const response = await fetch("/updateEmployee", {
         method: 'POST', 
         headers: {'Content-Type': 'application/json'}, 
         body: JSON.stringify({first_name: newFirstName, last_name: newLastName, job_title: newJobTitle, employee_id: selectedEmployee.employee_id})

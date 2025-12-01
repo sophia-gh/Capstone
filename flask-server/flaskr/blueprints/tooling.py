@@ -101,15 +101,15 @@ def add_component():
             detail_number=detail_number,
             component_number=component_number,
             build_number=next_build_number_str,
-            revision=1,
+            # revision=1, automatically done in db
             lifetime_hits=0,
             current_hits=0,
-            # current_height=nominal_height,
-            # current_state=CurrentState.active
+            # current_height=nominal_height, automatically done in db
+            current_state=CurrentState.inventory
         )
         db.session.add(new_component)
         db.session.commit()
-        return jsonify({'message': 'added component successfully'})
+        return jsonify({'message': 'added component successfully'}, {'message2': f'Added component {new_component.tool_number}-{new_component.detail_number}-b{new_component.build_number}-{new_component.component_number} successfully'})
     except:
         traceback.print_exc()
         return jsonify({'message': 'error adding component'})
@@ -218,12 +218,12 @@ def get_OperationsLogForDie():
 def get_ComponentsJoinComponentDetails():
     data = request.get_json()
     tool_number = data.get('tool_number')
-    sql_statement = text("""select t1.detail_number, t1.build_number, t1,component_number, 
+    sql_statement = text("""select t1.detail_number, t1.build_number, t1.component_number, 
                             t1.revision, t1.lifetime_hits, t1.current_hits, t1.current_height,
                             t1.current_state, t2.min_height, t2.nominal_height, t2.low_quantity, 
                             t2.frequency_to_sharpen, t2.description, t2.number_used_in_tool, t2.cost, 
                             t2.current_revision from components as t1 join component_details as t2 on 
-                            t1.detail_number = t2.detail_number where t1.tool_number = :tool_number;""")
+                            t1.detail_number = t2.detail_number where t1.tool_number = :tool_number and t2.tool_number = :tool_number;""")
     
     components_query = db.session.execute(sql_statement, {"tool_number": tool_number}).all() 
     componentsList = [dict(component._mapping) for component in components_query]

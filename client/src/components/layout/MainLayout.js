@@ -42,7 +42,7 @@ const MainLayout = () => {
 
             <div className="content-area">
                 <header className="top-header">
-                    <h1 className="system-title">Tool and Die Inventory</h1>
+                    <h1 className="system-title">Tool Management System</h1>
                     <div className="header-icons">
                             <div className="user-container">
                             <span className="user-name">

@@ -56,7 +56,8 @@ def end_production_run():
             print('not in production')
             return jsonify('not in production')
     statement2 = db.update(Components
-    ).where(Components.tool_number == tool_number and Components.current_state == CurrentState.active
+    ).where(Components.tool_number == tool_number
+    ).where(Components.current_state == CurrentState.active
     ).values(current_hits = Components.current_hits + number_of_hits, lifetime_hits = Components.lifetime_hits + number_of_hits
     ).returning(Components.current_hits, Components.lifetime_hits)
     updateHitsQuery = db.session.execute(statement2).first()
@@ -65,9 +66,7 @@ def end_production_run():
             statement3 = db.update(Dies).where(Dies.tool_number == tool_number).values(status = DieStatus.not_serviced).returning(Dies.tool_number, Dies.status)
             updateDieStateQuery = db.session.execute(statement3).first()
             print(updateDieStateQuery)
-            print('ss')
             if updateDieStateQuery:
-                print('yes')
                 db.session.commit()
                 return jsonify({'message' : 'production run ended successfully'})
     except:
@@ -82,7 +81,7 @@ def service_die():
 
     if dieQuery:
         if dieQuery.status == DieStatus.in_production: 
-            return jsonify({'message' : 'already in production'})
+            return jsonify({'message' : 'die in production'})
 
     statement2 = db.select(
         ComponentDetails.detail_number, 
@@ -161,7 +160,23 @@ def update_component_state():
     detail_number = data.get('detail_number')
     build_number = data.get('build_number')
     component_number = data.get('component_number')
+    current_state = data.get('current_state')
     new_state = data.get('new_state')
+    print('Current State:', current_state)
+    # Check if die is in production when setting component to active
+    if new_state == 'active':
+        checkInProduction = db.select(Dies).where(Dies.tool_number == tool_number)
+        checkInProductionQuery = db.session.scalars(checkInProduction).first()
+        if checkInProductionQuery:
+            if checkInProductionQuery.status == DieStatus.in_production: 
+                return jsonify({'message' : 'cannot update component state to active while die in production'})
+    # Check if die is in production and previous state is active
+    if current_state == 'active':
+        checkInProduction = db.select(Dies).where(Dies.tool_number == tool_number)
+        checkInProductionQuery = db.session.scalars(checkInProduction).first()
+        if checkInProductionQuery:
+            if checkInProductionQuery.status == DieStatus.in_production: 
+                return jsonify({'message' : 'cannot update component state from active while die in production'})
     statement = db.select(Components).where(
         Components.tool_number == tool_number,
         Components.detail_number == detail_number,

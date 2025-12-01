@@ -90,7 +90,7 @@ fetchDies();
       const response = await fetch("/updateComponentState", {
         method: 'POST', 
         headers: {'Content-Type': 'application/json'}, 
-        body: JSON.stringify({tool_number: toolNumber, detail_number: selectedComponent.detail_number, build_number: selectedComponent.build_number, component_number: selectedComponent.component_number, new_state: newState})
+        body: JSON.stringify({tool_number: toolNumber, detail_number: selectedComponent.detail_number, build_number: selectedComponent.build_number, component_number: selectedComponent.component_number, current_state: selectedComponent.current_state, new_state: newState})
       })
     
       if (!response.ok) {
@@ -102,6 +102,10 @@ fetchDies();
         alert("error updating component state");
       } else if (result.message === "Error logging operation") {
         alert("error logging")
+      } else if (result.message === "cannot update component state to active while die in production") {
+        alert("cannot update component state to active while die in production")
+      } else if (result.message === "cannot update component state from active while die in production") {
+        alert("cannot update component state from active while die in production")
       } else {
         alert("State updated!") 
       }
@@ -288,7 +292,7 @@ const handleAddComponent = async () => {
     });
     const result = await response.json();
     if (result.message === "added component successfully") {
-      alert("Component added!");
+      alert(JSON.stringify(result.message2));
       setShowAddComponentModal(false);
     } else {
       alert("Error: " + JSON.stringify(result));
@@ -557,12 +561,12 @@ const sortedFilteredComponents = React.useMemo(() => {
                   onChange={(e) => setNewComponentNumber(e.target.value)}
                 />
 
-                <label>Build Number</label>
+                {/* <label>Build Number</label>
                 <input
                   type="text"
                   value={newBuildNumber}
                   onChange={(e) => setNewBuildNumber(e.target.value)}
-                />
+                /> */}
 
                 <div className="modal-actions">
                   <button
@@ -570,6 +574,7 @@ const sortedFilteredComponents = React.useMemo(() => {
                     onClick={() => {
                       console.log("Add button clicked");
                       handleAddComponent();
+                      setShowAddComponentModal(false);
                     }}
                   >
                     Add
