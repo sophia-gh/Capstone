@@ -242,11 +242,14 @@ def remove_Component():
             Components.detail_number == detail_number,
             Components.build_number == build_number,
             Components.component_number == component_number
-        ).returning(Components.tool_number)
+        ).returning(Components.tool_number, Components.current_state)
         delete_component_query = db.session.execute(statement).first()
+        print(delete_component_query.current_state)
         if delete_component_query:
+            if delete_component_query.current_state == CurrentState.active:
+                return jsonify({'message': 'cannot remove component while it is active'})
             db.session.commit()
-            return jsonify({'message': 'component removed successfully'})
+            return jsonify({'message': 'removed component successfully'})
         else:
             return jsonify({'message': 'component not found'})
     except:

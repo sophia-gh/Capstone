@@ -205,6 +205,36 @@ fetchDies();
       setShowModal(false);
     }
   };
+  
+  const handleRemoveComponent = async (e) => { 
+    e.preventDefault(); 
+    try {
+      const response = await fetch("/removeComponent", {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify({tool_number: toolNumber, detail_number: selectedComponent.detail_number, build_number: selectedComponent.build_number, component_number: selectedComponent.component_number})
+      })
+    
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const result = await response.json()
+      console.log(result)     
+      if (result.message === "removed component successfully") {
+        alert("Component removed successfully!");
+      } else if (result.message === "current component state is active") {
+        alert("Cannot remove component while it is active");
+      } else 
+        alert("Error removing component: " + JSON.stringify(result));   
+      } catch (error) {
+      console.error(error.message);
+      alert("Error removing component.");
+    }   finally {
+      setShowActionsModal(false);
+    }   
+    fetchComponents();
+    fetchOperations();
+  }
   // Fetch components
     const fetchComponents = async () => {
       setLoadingComponents(true);
@@ -228,7 +258,7 @@ fetchDies();
     useEffect(() => {fetchComponents();}, [toolNumber]);
 
   // Fetch operations
-
+  
     const fetchOperations = async () => {
       setLoadingOperations(true);
       setError(null);
@@ -643,16 +673,16 @@ const sortedFilteredComponents = React.useMemo(() => {
                 <p><strong>Component Number:</strong> {selectedComponent.component_number}</p>
 
                 <form onSubmit={handleGrind}>
-                <p><strong>Material Removed</strong></p>
-                <input
-                type="text"
-                placeholder="Material Removed"
-                value={materialRemoved}
-                onChange={(e) => setMaterialRemoved(e.target.value)}
-                required
-                />
-                <button type="submit">Grind</button>
-            </form>
+                  <p><strong>Material Removed</strong></p>
+                  <input
+                    type="text"
+                    placeholder="Material Removed"
+                    value={materialRemoved}
+                    onChange={(e) => setMaterialRemoved(e.target.value)}
+                    required
+                  />
+                  <button type="submit">Grind</button>
+                </form>
               </div>
             )}
 
@@ -660,26 +690,32 @@ const sortedFilteredComponents = React.useMemo(() => {
               <div>
                 <h3>Update Component State</h3>
                 <form onSubmit={handleUpdateState}>
-                <select className="filter"
-                value={newState}
-                onChange={(e) => setNewState(e.target.value)}
-                required
-                >
-                  <option value="">Select new state</option>
-                  <option value="active">Active</option>
-                  <option value="inventory">Inventory</option>
-                  <option value="trash">Trash</option>
-                  <option value="missing">Missing</option>
-                </select>
-                <button type="submit">Update</button>
-            </form>
+                  <select className="filter"
+                    value={newState}
+                    onChange={(e) => setNewState(e.target.value)}
+                    required
+                  >
+                    <option value="">Select new state</option>
+                    <option value="active">Active</option>
+                    <option value="inventory">Inventory</option>
+                    <option value="trash">Trash</option>
+                    <option value="missing">Missing</option>
+                  </select>
+                  <button type="submit">Update</button>
+                </form>
               </div>
             )}
 
             {activeTab === "remove" && (
               <div>
                 <h3>Remove component</h3>
-                <p>Not implemented yet</p>
+                <p><strong>Tool Number:</strong> {toolNumber}</p>
+                <p><strong>Detail Number:</strong> {selectedComponent.detail_number}</p>
+                <p><strong>Build Number:</strong> {selectedComponent.build_number}</p>
+                <p><strong>Component Number:</strong> {selectedComponent.component_number}</p>
+                <form onSubmit={handleRemoveComponent}>
+                <button type="submit">Remove</button>
+                </form>
               </div>
             )}
 
