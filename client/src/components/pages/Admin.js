@@ -279,14 +279,18 @@ const handleNewPassword = async (e) => {
                 />
                 
                 <h5>Job Title</h5>
-                <input
-                type="text"
-                placeholder="Job Title"
-                value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)} 
-                maxLength={20}
-                required
-                />
+                <select className="filter"
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
+                  required
+                >
+                  <option value="">Select job title</option>
+                  <option value="admin">Admin</option>
+                  <option value="tool_manager">Tool Manager</option>
+                  <option value="press_tech">Press Tech</option>
+                  <option value="engineer">Engineer</option>
+                  <option value="tool_maker">Tool Maker</option>
+                </select>
 
                 <h5>Password</h5>
                 <input
